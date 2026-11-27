@@ -1,0 +1,36 @@
+<!doctype html><html><head><meta charset=utf-8><style>
+body{margin:0;background:#111;display:flex;align-items:center;justify-content:center;height:100vh;font-family:ui-monospace,Menlo,monospace}
+.w{width:1760px;background:#161616;border:2px solid #FFD400;box-shadow:0 0 0 8px #111}
+.t{background:#FFD400;color:#111;padding:8px 14px;font-weight:700;font-size:20px;display:flex;justify-content:space-between}
+pre{margin:0;padding:22px 26px;color:#F5F1E6;font-size:21px;line-height:1.38;white-space:pre-wrap}
+.p{color:#FF6B00}.r{color:#ff5a4f;font-weight:700}.y{color:#FFD400}.g{color:#7ad97a}
+</style></head><body><div class=w><div class=t><span>&#9888; zsh: ~/donotmix</span><span>DoNotMix</span></div>
+<pre><span class=p>$</span> donotmix propose      # smallest change, verified against the tests; changes NOTHING
+Proposal P-1127030100-discount_e-recommenda  (mitigation)
+  target   : Staging (gLwVaeNhazK3e4JjNGUzEF) in project MixMart at http://localhost:8000
+  changes  :
+    discount_engine: on -&gt; off
+    recommendation: on -&gt; off
+  why      : Breaks the hazardous combination(s) HZ-1, HZ-2, HZ-3 by switching discount_engine, recommendation off in Staging.
+  evidence : resolves HZ-1, HZ-2, HZ-3; verified state passes 2/2 test runs
+  impact   : Changes 2 flag(s) in Staging only; users in this environment lose/gain: discount_engine, recommendation. No code changes.
+
+Proposal P-1127030100-dynamic_pr-recommenda  (mitigation)
+  target   : Staging (gLwVaeNhazK3e4JjNGUzEF) in project MixMart at http://localhost:8000
+  changes  :
+    dynamic_pricing: on -&gt; off
+    recommendation: on -&gt; off
+  why      : Breaks the hazardous combination(s) HZ-1, HZ-2, HZ-3 by switching dynamic_pricing, recommendation off in Staging.
+  evidence : resolves HZ-1, HZ-2, HZ-3; verified state passes 2/2 test runs
+  impact   : Changes 2 flag(s) in Staging only; users in this environment lose/gain: dynamic_pricing, recommendation. No code changes.
+
+Proposal P-1127030100-new_checko-recommenda  (mitigation)
+  target   : Staging (gLwVaeNhazK3e4JjNGUzEF) in project MixMart at http://localhost:8000
+  changes  :
+    new_checkout: on -&gt; off
+    recommendation: on -&gt; off
+  why      : Breaks the hazardous combination(s) HZ-1, HZ-2, HZ-3 by switching new_checkout, recommendation off in Staging.
+  evidence : resolves HZ-1, HZ-2, HZ-3; verified state passes 2/2 test runs
+  impact   : Changes 2 flag(s) in Staging only; users in this environment lose/gain: new_checkout, recommendation. No code changes.
+
+A human must approve before anything changes:  donotmix approve P-1127030100-discount_e-recommenda</pre></div></body></html>

@@ -240,12 +240,36 @@ def hypotheses(summary: dict, skill: dict | None) -> list[dict]:
         ok &= (m["core_size_mean"] or 99) < (m["raw_counterexample_diff_mean"] or 0) and m["exact_or_implied_rate"] >= 0.8
     out.append({"id": "H3", "statement": "Minimization yields much smaller, correct reproduction conditions.", "result": "supported" if ok and ev else "mixed", "evidence": "; ".join(ev)})
     if skill:
-        out.append({"id": "H4", "statement": "The Agent Skill reduces context and tool calls for the same verification task.", "result": skill.get("result", "see skill eval"),
-                    "evidence": skill.get("evidence", "")})
+        ev = "; ".join(f"skill {v}: {d.get('result')} ({d.get('evidence')})" for v, d in skill.items())
+        latest = skill[sorted(skill)[-1]]
+        out.append({"id": "H4", "statement": "The Agent Skill reduces context and tool calls for the same verification task.",
+                    "result": latest.get("result", "see skill eval"), "evidence": ev})
     else:
         out.append({"id": "H4", "statement": "The Agent Skill reduces context and tool calls for the same verification task.", "result": "not-run",
                     "evidence": "run benchmarks/skill_eval.py"})
     return out
+
+
+def load_skill(out_root: Path) -> dict | None:
+    d = out_root / "skill_eval"
+    vs = {v: json.loads((d / v / "summary.json").read_text()) for v in ("v1", "v2") if (d / v / "summary.json").exists()}
+    return vs or None
+
+
+def refresh_hypotheses(out: str = "benchmarks/results") -> int:
+    """Recompute hypotheses (e.g. after a new skill eval) without re-running the synthetic suite."""
+    p = ROOT / out / "latest" / "summary.json"
+    s = json.loads(p.read_text())
+    s["hypotheses"] = hypotheses(s, load_skill(ROOT / out))
+    mm = ROOT / out / "mixmart" / "summary.json"
+    if mm.exists():
+        s["mixmart"] = json.loads(mm.read_text())
+    p.write_text(json.dumps(s, indent=1))
+    src = ROOT / (ROOT / out / "latest" / "SOURCE").read_text().strip() / "summary.json"
+    if src.exists():
+        src.write_text(json.dumps(s, indent=1))
+    print(json.dumps([(h["id"], h["result"]) for h in s["hypotheses"]]))
+    return 0
 
 
 def machine() -> dict:
@@ -292,8 +316,7 @@ def main(suite: str = "quick", out: str = "benchmarks/results", seeds: int | Non
     with (od / "raw.jsonl").open("w") as f:
         for r in rows:
             f.write(json.dumps(r) + "\n")
-    skill_path = ROOT / out / "skill_eval" / "summary.json"
-    skill = json.loads(skill_path.read_text()) if skill_path.exists() else None
+    skill = load_skill(ROOT / out)
     summary = {"schema": "donotmix.benchmark/v1", "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "suite": suite,
                "git_commit": git_commit(), "command": f"python -m benchmarks.run --suite {suite}" + (f" --seeds {seeds}" if seeds else ""),
                "machine": machine(), "config": {**spec, "eval_seeds_used": eval_seeds, "random_seeds": RANDOM_SEEDS, "split": "eval seeds 100+, dev seeds 0..k excluded"},
@@ -318,5 +341,8 @@ if __name__ == "__main__":
     ap.add_argument("--out", default="benchmarks/results")
     ap.add_argument("--seeds", type=int, default=None)
     ap.add_argument("--jobs", type=int, default=8)
+    ap.add_argument("--refresh-hypotheses", action="store_true")
     a = ap.parse_args()
+    if a.refresh_hypotheses:
+        raise SystemExit(refresh_hypotheses(a.out))
     raise SystemExit(main(a.suite, a.out, a.seeds, a.jobs))

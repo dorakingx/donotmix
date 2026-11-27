@@ -24,12 +24,14 @@ def color(line: str) -> str:
     return e
 
 
-body = "\n".join(color(l) for l in text.splitlines())
+lines = text.splitlines()
+body = "\n".join(color(l) for l in lines)
+fs = max(13, min(21, int(880 / (max(len(lines), 1) + 2) / 1.38), int(1700 / 0.6 / max(len(l) for l in lines + [cmd]))))
 print(f"""<!doctype html><html><head><meta charset=utf-8><style>
 body{{margin:0;background:#111;display:flex;align-items:center;justify-content:center;height:100vh;font-family:ui-monospace,Menlo,monospace}}
 .w{{width:1760px;background:#161616;border:2px solid #FFD400;box-shadow:0 0 0 8px #111}}
 .t{{background:#FFD400;color:#111;padding:8px 14px;font-weight:700;font-size:20px;display:flex;justify-content:space-between}}
-pre{{margin:0;padding:22px 26px;color:#F5F1E6;font-size:21px;line-height:1.38;white-space:pre-wrap}}
+pre{{margin:0;padding:22px 26px;color:#F5F1E6;font-size:{fs}px;line-height:1.38;white-space:pre-wrap}}
 .p{{color:#FF6B00}}.r{{color:#ff5a4f;font-weight:700}}.y{{color:#FFD400}}.g{{color:#7ad97a}}
 </style></head><body><div class=w><div class=t><span>&#9888; {html.escape(title)}</span><span>DoNotMix</span></div>
 <pre><span class=p>$</span> {html.escape(cmd)}

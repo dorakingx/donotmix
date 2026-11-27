@@ -1,0 +1,15 @@
+<!doctype html><html><head><meta charset=utf-8><style>
+body{margin:0;background:#111;display:flex;align-items:center;justify-content:center;height:100vh;font-family:ui-monospace,Menlo,monospace}
+.w{width:1760px;background:#161616;border:2px solid #FFD400;box-shadow:0 0 0 8px #111}
+.t{background:#FFD400;color:#111;padding:8px 14px;font-weight:700;font-size:20px;display:flex;justify-content:space-between}
+pre{margin:0;padding:22px 26px;color:#F5F1E6;font-size:21px;line-height:1.38;white-space:pre-wrap}
+.p{color:#FF6B00}.r{color:#ff5a4f;font-weight:700}.y{color:#FFD400}.g{color:#7ad97a}
+</style></head><body><div class=w><div class=t><span>&#9888; zsh: ~/donotmix</span><span>DoNotMix</span></div>
+<pre><span class=p>$</span> # a coding agent cannot approve or apply on a human&#x27;s behalf
+$ donotmix apply P-1127030100-discount_e-recommenda      # an agent tries to skip approval
+donotmix: proposal P-1127030100-discount_e-recommenda has no human approval. Ask the user to run: donotmix approve P-1127030100-discount_e-recommenda
+exit code: 6
+
+$ donotmix approve P-1127030100-discount_e-recommenda    # from a non-interactive agent shell
+donotmix: approval requires a human at an interactive terminal (or the dashboard). Ask the user to run: donotmix approve P-1127030100-discount_e-recommenda
+exit code: 6</pre></div></body></html>

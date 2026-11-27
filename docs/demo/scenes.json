@@ -1,19 +1,110 @@
 [
-  {"id": "feature-a", "frame": "frames/01-feature-a.html", "narration": "Feature A works.", "min": 1.8},
-  {"id": "feature-bc", "frame": "frames/02-feature-c.html", "narration": "Feature B works. Feature C works.", "min": 2.6},
-  {"id": "question", "frame": "frames/03-question.html", "narration": "But what happens when they work together?", "min": 2.8},
-  {"id": "logo", "frame": "frames/04-logo.html", "narration": "Safe alone. Dangerous together. Meet DoNotMix.", "min": 3.6},
-  {"id": "safe-alone", "frame": "shots/safe_alone.png", "caption": "Every flag ON by itself x every storefront scenario: 70 / 70 pass", "narration": "In our demo store, every feature flag passes every scenario on its own. Seventy out of seventy tests are green."},
-  {"id": "flagsmith", "frame": "shots/flagsmith.png", "caption": "Live self-hosted Flagsmith, read through the official Flagsmith CLI", "narration": "Flagsmith is the source of truth. DoNotMix reads the live Staging environment through the official Flagsmith CLI: the flags, the segments, and the full environment document, including a segment override that turns AI search on for beta testers. It never writes during a scan."},
-  {"id": "scan", "frame": "shots/scan.png", "caption": "donotmix scan: 26 states cover every 3-way combination; your real tests run on each", "narration": "Ten flags means one thousand and twenty-four states. DoNotMix builds a covering array that hits every three-way combination in just twenty-six states, and runs the real test suite on each one, evaluated by the Flagsmith SDK, segment overrides included."},
-  {"id": "overview", "frame": "shots/dash_overview.png", "caption": "Verdict: the live Staging state already fails (exit code 11)", "narration": "Verdict: the current Staging state is already broken."},
-  {"id": "hazard", "frame": "shots/dash_hazard.png", "caption": "Minimal failing condition, proven necessary and sufficient by re-execution", "narration": "Three flags together make checkout charge the wrong amount, with no error at all. Delta debugging shrinks the failure to exactly those three flags. Flipping any one of them makes it pass, and re-testing every completion of the other flags shows the condition is sufficient."},
-  {"id": "matrix", "frame": "shots/dash_matrix.png", "caption": "Reaction Matrix: which pairs react, which were tested, which were never mixed", "narration": "It also finds a crash that needs two flags, a bug that needs a flag to be off, and one that only beta users hit, through a Flagsmith segment override."},
-  {"id": "benchmark", "frame": "shots/dash_benchmark.png", "caption": "Measured on held-out benchmarks with hidden ground truth (docs/BENCHMARKS.md)", "narration": "And it is measured, not claimed. At the same small test budget, DoNotMix finds about ninety percent of planted faults, where random testing finds about seventy. Minimization recovers the exact cause in over ninety percent of cases, with zero false positives. Where we lost, at the tiniest budget on our demo app, we say so."},
-  {"id": "propose", "frame": "shots/propose.png", "caption": "donotmix propose: the smallest change, verified against the tests before anyone approves it", "narration": "Fixing Staging is a human decision. DoNotMix proposes the smallest change, and verifies it against the tests before anyone sees it."},
-  {"id": "approve", "frame": "shots/dash_approve.png", "caption": "Only a human can approve: type the environment name, sign, approve", "narration": "Only a human can approve. Agents cannot: approval needs an interactive terminal, or this dashboard with the environment name typed out."},
-  {"id": "applied", "frame": "shots/applied.png", "caption": "Apply: drift check, exact flags via Flagsmith CLI, automatic re-scan, hash-chained audit log", "narration": "Apply checks that nothing drifted, changes exactly the approved flags through the Flagsmith CLI, re-scans automatically, and records everything in a tamper-evident audit log. The live hazards are gone."},
-  {"id": "skill", "frame": "shots/skill.png", "caption": "Agent Skill (agentskills.io spec): the whole Flagsmith job, stopping at human approval", "narration": "Your coding agent can run this whole workflow with the DoNotMix Agent Skill. It is validated against the Agent Skills spec, uses the Flagsmith CLI with compact JSON output, and always stops for human approval."},
-  {"id": "docker", "frame": "shots/quickstart.png", "caption": "docker compose up: self-hosted Flagsmith + demo + scan + dashboard", "narration": "One docker compose up gives you self-hosted Flagsmith, the demo store, a first scan and the dashboard."},
-  {"id": "end", "frame": "frames/99-end.html", "narration": "DoNotMix. Find the combinations that break your app, before your users do.", "min": 4.5}
+ {
+  "id": "feature-a",
+  "frame": "frames/01-feature-a.html",
+  "narration": "Feature A works.",
+  "min": 1.8
+ },
+ {
+  "id": "feature-bc",
+  "frame": "frames/02-feature-c.html",
+  "narration": "Feature B works. Feature C works.",
+  "min": 2.6
+ },
+ {
+  "id": "question",
+  "frame": "frames/03-question.html",
+  "narration": "But what happens when they work together?",
+  "min": 2.8
+ },
+ {
+  "id": "logo",
+  "frame": "frames/04-logo.html",
+  "narration": "Safe alone. Dangerous together. Meet DoNotMix.",
+  "min": 3.6
+ },
+ {
+  "id": "safe-alone",
+  "frame": "shots/safe_alone.png",
+  "caption": "Each flag ON by itself x every storefront scenario: 70 / 70 pass",
+  "narration": "In our demo store, every feature flag passes every scenario on its own. Seventy out of seventy tests are green."
+ },
+ {
+  "id": "flagsmith",
+  "frame": "shots/flagsmith.png",
+  "caption": "Live self-hosted Flagsmith, read through the official Flagsmith CLI (read-only)",
+  "narration": "Flagsmith is the source of truth. DoNotMix reads the live Staging environment through the official Flagsmith CLI: flags, segments, and the full environment document, including a segment override that turns AI search on for beta testers."
+ },
+ {
+  "id": "scan",
+  "frame": "shots/scan.png",
+  "caption": "donotmix scan: 25 states cover every 2- and 3-way combination; 514 real test runs in 16 s",
+  "narration": "Ten flags means one thousand and twenty-four states. DoNotMix builds a covering array that hits every three-way combination in twenty-five states, and runs the real test suite on each, evaluated by the Flagsmith SDK, segment overrides included. Sixteen seconds."
+ },
+ {
+  "id": "overview",
+  "frame": "shots/dash_overview.png",
+  "caption": "Verdict: the live Staging state already fails (exit code 11)",
+  "narration": "The verdict: the current Staging state is already broken."
+ },
+ {
+  "id": "hazard",
+  "frame": "shots/dash_hazards_HZ-1.png",
+  "caption": "Minimal failing condition: each flag necessary; no completion of the others makes it pass",
+  "narration": "Three flags together make checkout charge the wrong amount, with no error at all. Delta debugging shrinks the failure to exactly those three flags. Flipping any one of them makes the test pass, and no combination of the other seven flags makes the failure go away."
+ },
+ {
+  "id": "matrix",
+  "frame": "shots/dash_matrix.png",
+  "caption": "Reaction Matrix: which flag pairs react, which were tested, which were never mixed",
+  "narration": "It also finds a crash that needs two flags, and a payment bug that only appears when a flag is switched off."
+ },
+ {
+  "id": "segment",
+  "frame": "shots/dash_hazards_HZ-3.png",
+  "caption": "A bug only the beta segment sees: Flagsmith's segment override turns ai_search on",
+  "narration": "And one that only beta users hit, because a Flagsmith segment override changes their mix."
+ },
+ {
+  "id": "benchmark",
+  "frame": "shots/dash_benchmark.png",
+  "caption": "Measured on held-out benchmarks with hidden ground truth (docs/BENCHMARKS.md)",
+  "narration": "Measured, not claimed. At the same small test budget, DoNotMix finds about ninety percent of planted faults, where random testing finds about seventy. Minimization recovers the exact cause in over ninety percent of cases, with zero false positives. Where it lost, at the tiniest budget on our demo app, we say so."
+ },
+ {
+  "id": "propose",
+  "frame": "shots/propose.png",
+  "caption": "donotmix propose: the smallest change, verified against the tests. Nothing is changed yet.",
+  "narration": "Fixing Staging is a human decision. DoNotMix proposes the smallest flag change, and verifies it against the tests before anyone sees it."
+ },
+ {
+  "id": "refused",
+  "frame": "shots/refused.png",
+  "caption": "Agents cannot approve or apply: exit code 6",
+  "narration": "An agent cannot approve it, and cannot apply it without approval."
+ },
+ {
+  "id": "approve",
+  "frame": "shots/dash_approve.png",
+  "caption": "Only a human approves: type the environment name and sign. Apply is drift-checked and audited.",
+  "narration": "A human approves by typing the environment name. Apply then checks that nothing drifted, changes exactly the approved flags through the Flagsmith CLI, re-scans, and writes a tamper-evident audit log."
+ },
+ {
+  "id": "skill",
+  "frame": "shots/skill.png",
+  "caption": "Agent Skill: valid per agentskills.io; 16.5% fewer tokens and 47% fewer tool calls in a measured A/B",
+  "narration": "Your coding agent can run the whole workflow with the DoNotMix Agent Skill. In a measured A B test it used sixteen percent fewer tokens and half the tool calls, completed every run, and never changed a flag without approval."
+ },
+ {
+  "id": "docker",
+  "frame": "shots/quickstart.png",
+  "caption": "docker compose up: self-hosted Flagsmith + demo + first scan + dashboard",
+  "narration": "One docker compose up gives you self-hosted Flagsmith, the demo store, a first scan and the dashboard."
+ },
+ {
+  "id": "end",
+  "frame": "frames/99-end.html",
+  "narration": "DoNotMix. Find the combinations that break your app, before your users do.",
+  "min": 4.5
+ }
 ]

@@ -1,0 +1,51 @@
+<!doctype html><html><head><meta charset=utf-8><style>
+body{margin:0;background:#111;display:flex;align-items:center;justify-content:center;height:100vh;font-family:ui-monospace,Menlo,monospace}
+.w{width:1760px;background:#161616;border:2px solid #FFD400;box-shadow:0 0 0 8px #111}
+.t{background:#FFD400;color:#111;padding:8px 14px;font-weight:700;font-size:20px;display:flex;justify-content:space-between}
+pre{margin:0;padding:22px 26px;color:#F5F1E6;font-size:14px;line-height:1.38;white-space:pre-wrap}
+.p{color:#FF6B00}.r{color:#ff5a4f;font-weight:700}.y{color:#FFD400}.g{color:#7ad97a}
+</style></head><body><div class=w><div class=t><span>&#9888; zsh: ~/donotmix</span><span>DoNotMix</span></div>
+<pre><span class=p>$</span> donotmix scan -e Staging
+<span class="y">&gt; snapshot: reading Flagsmith environment (read-only)</span>
+<span class="y">&gt; analysis: scanning source for flag interactions</span>
+<span class="y">&gt; plan: strategy=risk t=3 budget=None seed=0</span>
+<span class="y">&gt; self-check: comparing warm pytest workers with fresh processes on 3 states</span>
+<span class="y">&gt; execute: 25 configurations x 2 personas, 8 jobs</span>
+<span class="y">&gt; minimize: delta debugging + sensitivity + generality checks</span>
+<span class="y">&gt; explain: rule-based</span>
+
+<span class="r">  [LIVE_HAZARD] The current Staging state fails (3 live hazard(s)); 4 latent hazard(s) more.</span>
+  tested 25 configs x 2 personas | 2-way 100% | 3-way 100% | 514 executions | 16.16s | analysis: rule-based
+
+<span class="r">  HZ-1 LIVE   new_checkout=on + dynamic_pricing=on + discount_engine=on -&gt; test_member_checkout_total (AssertionError)</span>
+      core: new_checkout=True, dynamic_pricing=True, discount_engine=True   generality: sufficient (fails 64/96, masked 32, exhaustive)
+      repro: donotmix reproduce HZ-1 --run 20261127T030036Z
+
+<span class="r">  HZ-2 LIVE   new_checkout=on + dynamic_pricing=on + discount_engine=on + loyalty_program=on -&gt; test_loyalty_points (AssertionError)</span>
+      core: new_checkout=True, dynamic_pricing=True, discount_engine=True, loyalty_program=True   generality: sufficient (fails 32/48, masked 16, exhaustive)
+      repro: donotmix reproduce HZ-2 --run 20261127T030036Z
+
+<span class="r">  HZ-3 LIVE   recommendation=on -&gt; test_recommendations (AssertionError)</span>
+      core: recommendation=True   generality: held-in-sample (fails 32/32, sampled)
+      repro: donotmix reproduce HZ-3 --run 20261127T030036Z
+
+<span class="y">  HZ-4 LATENT express_shipping=off + new_payment=on -&gt; test_loyalty_points (PaymentError)</span>
+      core: express_shipping=False, new_payment=True   generality: sufficient (fails 128/128, exhaustive)
+      repro: donotmix reproduce HZ-4 --run 20261127T030036Z
+
+<span class="y">  HZ-5 LATENT guest_checkout=on + loyalty_program=on -&gt; test_guest_checkout_policy (AttributeError)</span>
+      core: guest_checkout=True, loyalty_program=True   generality: held-in-sample (fails 24/32, masked 8, sampled)
+      repro: donotmix reproduce HZ-5 --run 20261127T030036Z
+
+<span class="y">  HZ-6 LATENT guest_checkout=on + new_payment=on -&gt; test_guest_checkout_policy (PaymentError)</span>
+      core: guest_checkout=True, new_payment=True   generality: held-in-sample (fails 32/32, sampled)
+      repro: donotmix reproduce HZ-6 --run 20261127T030036Z
+
+<span class="y">  HZ-7 LATENT recommendation=on + ai_search=on -&gt; test_recommendations (AssertionError)</span>
+      core: recommendation=True, ai_search=True   generality: held-in-sample (fails 32/32, sampled)
+      repro: donotmix reproduce HZ-7 --run 20261127T030036Z
+
+  report: .donotmix/runs/20261127T030036Z/report.md   (dashboard: donotmix dashboard)
+  Finite testing: a clean result means no failure was observed under the executed configurations, tests and personas. It is not a proof of safety.
+
+exit code: 11</pre></div></body></html>

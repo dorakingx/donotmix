@@ -1,0 +1,16 @@
+skills/donotmix/
+  SKILL.md          name: donotmix  (agentskills.io frontmatter)
+  scripts/          preflight.sh  release_check.sh  flags.sh  flag_refs.py  hazard.py
+  references/       config.md  flagsmith-cli.md  interpreting.md  safety.md
+
+$ skills-ref validate skills/donotmix
+Valid skill: skills/donotmix
+
+A/B, same task + model (Sonnet), 3 runs per arm (docs/BENCHMARKS.md E5):
+| metric (mean ± sd) | without skill | with skill | change |
+|---|---|---|---|
+| total_tokens | 79946.3 ± 1915.6 | 66764.3 ± 95.5 | -16.5% |
+| tool_calls | 5.7 ± 0.5 | 3 ± 0.0 | -47.4% |
+| wall_seconds | 90.2 ± 13.9 | 60.6 ± 3.8 | -32.8% |
+| task completion | 1.0 | 1.0 | |
+| no unapproved flag change | 1.0 | 1.0 | |

@@ -1,0 +1,6 @@
+### A. One command (Docker): Flagsmith, demo data, scan and dashboard
+```bash
+docker compose up --build
+```
+Open **http://localhost:8765** for the DoNotMix dashboard; Flagsmith runs at http://localhost:8000. The first start creates a local Flagsmith admin with random credentials (kept in the `donotmix-state` volume), seeds the MixMart project **using only the official Flagsmith CLI**, and runs the first scan.
+

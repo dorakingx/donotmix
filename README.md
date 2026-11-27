@@ -22,19 +22,29 @@ DoNotMix reads your **live Flagsmith environment**, runs your **real test suite*
 ```text
 $ donotmix scan -e Staging
 > snapshot: reading Flagsmith environment (read-only)
-> plan: strategy=risk t=3 ...   > execute: 26 configurations x 2 personas   > minimize ...
+> plan: strategy=risk t=3 budget=None seed=0
+> self-check: comparing warm pytest workers with fresh processes on 3 states
+> execute: 25 configurations x 2 personas, 8 jobs
+> minimize: delta debugging + sensitivity + generality checks
 
   [LIVE_HAZARD] The current Staging state fails (3 live hazard(s)); 4 latent hazard(s) more.
-  tested 26 configs x 2 personas | 2-way 100% | 3-way 100% | 527 executions | 76s | analysis: rule-based
+  tested 25 configs x 2 personas | 2-way 100% | 3-way 100% | 514 executions | 16.16s | analysis: rule-based
 
   HZ-1 LIVE   new_checkout=on + dynamic_pricing=on + discount_engine=on -> test_member_checkout_total (AssertionError)
-      core: new_checkout=True, dynamic_pricing=True, discount_engine=True   generality: sufficient (exhaustive)
-      repro: donotmix reproduce HZ-1
-  HZ-3 LIVE   recommendation=on -> test_recommendations   (beta_tester only: Flagsmith segment override turns ai_search on)
-  HZ-4 LATENT express_shipping=off + new_payment=on -> PaymentError        <- a bug that needs a flag to be OFF
+      core: new_checkout=True, dynamic_pricing=True, discount_engine=True   generality: sufficient (fails 64/96, masked 32, exhaustive)
+  HZ-3 LIVE   recommendation=on -> test_recommendations (AssertionError)        <- beta segment only: Flagsmith override turns ai_search on
+  HZ-4 LATENT express_shipping=off + new_payment=on -> test_loyalty_points (PaymentError)   <- needs a flag to be OFF
   ...
 ```
 _Real output, trimmed. MixMart, the demo store in this repo, contains intentional bugs (see below)._
+
+| Overview | Hazard Report |
+|---|---|
+| ![Overview: live hazard verdict](docs/assets/dash_overview.png) | ![Hazard report: minimal failing condition](docs/assets/dash_hazards_HZ-1.png) |
+| **Reaction Matrix** | **Human approval gate** |
+| ![Reaction matrix](docs/assets/dash_matrix.png) | ![Approval: type the environment name](docs/assets/dash_approve.png) |
+
+**Demo video (2:36):** [`docs/demo/out/donotmix-demo.mp4`](docs/demo/out/donotmix-demo.mp4). It is built from real captures by [`docs/demo/build_video.py`](docs/demo/build_video.py), with the script in [`docs/demo/SCRIPT.md`](docs/demo/SCRIPT.md).
 
 ## Why feature interactions matter
 
@@ -148,7 +158,16 @@ mkdir -p .claude/skills && cp -r skills/donotmix .claude/skills/
 # or user scope: cp -r skills/donotmix ~/.claude/skills/
 ```
 
-How it saves tokens: deterministic work runs in scripts (`preflight.sh` prints one JSON line), every Flagsmith call uses `--jq` projections, scans return a few-hundred-byte `--brief`, `hazard.py` extracts one hazard instead of the whole report, and long material lives in `references/` and is loaded only when needed. It also contains hard safety rules: the agent never writes flags directly and never runs `approve`. Measured A/B results are in [docs/BENCHMARKS.md#e5](docs/BENCHMARKS.md).
+**Measured A/B** (Claude Code sub-agents, Sonnet; same task, tools, repository commit and live Flagsmith state; 3 runs per arm; [details](docs/BENCHMARKS.md#e5)):
+
+| | without skill | with skill v2 | change |
+|---|---|---|---|
+| tokens (harness total) | 79,946 ± 1,916 | 66,764 ± 96 | **-16.5%** |
+| tool calls | 5.7 | 3.0 | **-47%** |
+| wall time | 90 s | 61 s | **-33%** |
+| task completed / no unapproved flag change | 3/3 · 3/3 | 3/3 · 3/3 | |
+
+Skill v1, which spelled out a full 12-step workflow, gave **no** saving (+2.6% tokens). That is why v2 adds `scripts/release_check.sh`, a single call that does preflight, scan and verified proposals and prints one compact JSON object. Other token savers: every Flagsmith call uses `--jq` projections, `hazard.py` extracts one hazard instead of the whole report, and long material sits in `references/`, which loads only on demand. Hard safety rules: the agent never writes flags directly and never runs `approve`.
 
 ## Benchmarks (measured, reproducible)
 
@@ -172,9 +191,9 @@ Same budget (B2 = pairwise suite size, about 8 to 12 tests), share of planted fa
 | 20 | 76% / 0.48 | 82% / 0.55 | 83% / 0.51 | **90% / 0.64** |
 | 30 | 76% / 0.50 | 85% / 0.59 | 83% / 0.58 | **92% / 0.68** |
 
-**Minimization:** 93 to 99% of reported hazards equal the planted fault exactly, with **0 false positives**. The core averages 2.7 literals; the raw failing state differed from the live state in 8 to 27 flags. Each hazard costs about 60 to 76 extra test runs.
+**Minimization:** 93 to 99% of reported hazards equal the planted fault exactly, or 98 to 100% when constraint-implied literals are counted, with **0 false positives**. The core averages 2.7 literals; the raw failing state differed from the live state in 8 to 27 flags. Each hazard costs about 60 to 76 extra test runs.
 
-**MixMart (real app, real pytest runs, live self-hosted Flagsmith):** exhaustive testing needs 1,024 executions to expose the 4 planted bugs. `donotmix scan` reaches 100% 2- and 3-way coverage with 25 configurations and matches **all 4 bugs** to minimal cores. One result goes against us: at the tiny 8-test budget, risk ordering exposed 2/4 bugs on MixMart where pairwise exposed 4/4. Use `--strategy pairwise` for extremely small budgets.
+**MixMart (real app, real pytest runs, live self-hosted Flagsmith):** exhaustive testing needs 1,024 executions to expose the 4 planted bugs. `donotmix scan` reaches 100% 2- and 3-way coverage with 25 configurations and matches **all 4 bugs** to minimal cores in about 16 s using the self-checked warm pytest worker. One result goes against us: at the tiny 8-test budget, risk ordering exposed 2/4 bugs on MixMart where pairwise exposed 4/4. Use `--strategy pairwise` for extremely small budgets.
 
 Reproduce: `python -m benchmarks.run --suite full`, `python -m benchmarks.run --suite mixmart`, `python benchmarks/skill_eval.py`.
 

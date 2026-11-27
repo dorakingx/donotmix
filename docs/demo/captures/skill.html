@@ -1,0 +1,24 @@
+<!doctype html><html><head><meta charset=utf-8><style>
+body{margin:0;background:#111;display:flex;align-items:center;justify-content:center;height:100vh;font-family:ui-monospace,Menlo,monospace}
+.w{width:1760px;background:#161616;border:2px solid #FFD400;box-shadow:0 0 0 8px #111}
+.t{background:#FFD400;color:#111;padding:8px 14px;font-weight:700;font-size:20px;display:flex;justify-content:space-between}
+pre{margin:0;padding:22px 26px;color:#F5F1E6;font-size:21px;line-height:1.38;white-space:pre-wrap}
+.p{color:#FF6B00}.r{color:#ff5a4f;font-weight:700}.y{color:#FFD400}.g{color:#7ad97a}
+</style></head><body><div class=w><div class=t><span>&#9888; zsh: ~/donotmix</span><span>DoNotMix</span></div>
+<pre><span class=p>$</span> # DoNotMix Agent Skill
+skills/donotmix/
+  SKILL.md          name: donotmix  (agentskills.io frontmatter)
+  scripts/          preflight.sh  release_check.sh  flags.sh  flag_refs.py  hazard.py
+  references/       config.md  flagsmith-cli.md  interpreting.md  safety.md
+
+$ skills-ref validate skills/donotmix
+<span class="g">Valid skill: skills/donotmix</span>
+
+A/B, same task + model (Sonnet), 3 runs per arm (docs/BENCHMARKS.md E5):
+| metric (mean ± sd) | without skill | with skill | change |
+|---|---|---|---|
+| total_tokens | 79946.3 ± 1915.6 | 66764.3 ± 95.5 | -16.5% |
+| tool_calls | 5.7 ± 0.5 | 3 ± 0.0 | -47.4% |
+| wall_seconds | 90.2 ± 13.9 | 60.6 ± 3.8 | -32.8% |
+| task completion | 1.0 | 1.0 | |
+| no unapproved flag change | 1.0 | 1.0 | |</pre></div></body></html>

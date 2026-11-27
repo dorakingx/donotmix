@@ -1,6 +1,6 @@
 {
  "schema": "donotmix.mixmart-benchmark/v1",
- "created_at": "2026-11-27T02:37:36+00:00",
+ "created_at": "2026-11-27T03:02:16+00:00",
  "flagsmith": {
   "environment": "Staging",
   "api_url": "http://localhost:8000",
@@ -15,7 +15,7 @@
  "feasible_configs": 512,
  "total_configs": 1024,
  "exhaustive_executions": 1024,
- "exhaustive_seconds": 103.7,
+ "exhaustive_seconds": 9.4,
  "planted_bugs": 4,
  "bugs_exposed_by_exhaustive": [
   "B1-discount-on-catalog-price",
@@ -118,11 +118,11 @@
   }
  ],
  "scan": {
-  "run_id": "20261127T023622Z",
+  "run_id": "20261127T030200Z",
   "status": "LIVE_HAZARD",
   "configs": 25,
   "executions_total": 514,
-  "seconds": 73.79,
+  "seconds": 15.93,
   "coverage": {
    "2": {
     "t": 2,
@@ -154,7 +154,8 @@
      "test_member_checkout_total"
     ],
     "generality": "sufficient",
-    "matches": "B1-discount-on-catalog-price"
+    "matches": "B1-discount-on-catalog-price",
+    "match": "exact"
    },
    {
     "hazard": "HZ-2",
@@ -173,7 +174,8 @@
      "test_loyalty_points"
     ],
     "generality": "sufficient",
-    "matches": null
+    "matches": "B1-discount-on-catalog-price",
+    "match": "implies (extra literals needed for this test to observe it)"
    },
    {
     "hazard": "HZ-3",
@@ -188,7 +190,8 @@
      "test_recommendations"
     ],
     "generality": "held-in-sample",
-    "matches": "B4-ai-search-normalised-ids"
+    "matches": "B4-ai-search-normalised-ids",
+    "match": "exact"
    },
    {
     "hazard": "HZ-4",
@@ -206,7 +209,8 @@
      "test_member_checkout_total"
     ],
     "generality": "sufficient",
-    "matches": "B3-payment-needs-named-shipping"
+    "matches": "B3-payment-needs-named-shipping",
+    "match": "exact"
    },
    {
     "hazard": "HZ-5",
@@ -223,7 +227,8 @@
      "test_guest_checkout_policy"
     ],
     "generality": "held-in-sample",
-    "matches": "B2-guest-loyalty-crash"
+    "matches": "B2-guest-loyalty-crash",
+    "match": "exact"
    },
    {
     "hazard": "HZ-6",
@@ -240,7 +245,8 @@
      "test_guest_checkout_policy"
     ],
     "generality": "held-in-sample",
-    "matches": null
+    "matches": "B3-payment-needs-named-shipping",
+    "match": "implies (extra literals needed for this test to observe it)"
    },
    {
     "hazard": "HZ-7",
@@ -256,7 +262,8 @@
      "test_recommendations"
     ],
     "generality": "held-in-sample",
-    "matches": "B4-ai-search-normalised-ids"
+    "matches": "B4-ai-search-normalised-ids",
+    "match": "exact"
    }
   ],
   "bugs_matched": [
@@ -264,7 +271,8 @@
    "B2-guest-loyalty-crash",
    "B3-payment-needs-named-shipping",
    "B4-ai-search-normalised-ids"
-  ]
+  ],
+  "unmatched_hazards": []
  },
- "seconds": 180.1
+ "seconds": 28.6
 }

@@ -60,7 +60,7 @@ Most flag tools help you *change* flags safely. DoNotMix tells you which *combin
 - **Same small budget** (pairwise-suite size): risk-weighted DoNotMix found 92 / 93 / 90 / 92% of planted faults versus 67 / 72 / 76 / 76% for random testing (10 random seeds per case, 20 held-out cases per size), with earlier detection (NAPFD 0.64 to 0.68 vs 0.43 to 0.50). Ablations show that both the code-analysis prior and the change prior contribute.
 - **Minimization**: 93 to 99% of hazards equal the planted fault exactly, with 0 false positives. Cores average 2.7 literals; the raw failing states differed from the live state in 8 to 27 flags.
 - **Real app (MixMart, live Flagsmith)**: exhaustive testing takes 1,024 runs; DoNotMix needs 25 configurations for 100% 2- and 3-way coverage and matched all 4 planted bugs (3-way, 2-way, disabled-flag and segment-specific). Reported honestly: at an 8-test budget, risk ordering found 2/4 bugs on MixMart where pairwise found 4/4.
-- **Agent Skill A/B**: see E5 in docs/BENCHMARKS.md.
+- **Agent Skill A/B** (Claude Code sub-agents, Sonnet, 3 runs per arm, same task, tools, commit and Flagsmith state): skill v2 used **16.5% fewer tokens, 47% fewer tool calls and 33% less wall time** than no skill. Both arms had 100% task completion and zero unapproved flag changes. Our first version (v1, a 12-step workflow) gave no saving (+2.6% tokens), and we report it.
 
 ## Agent Skill description (Track 04)
 `skills/donotmix` (Agent Skills spec; passes `skills-ref validate`) takes a coding agent through a complete Flagsmith job built around the official CLI:
@@ -84,7 +84,7 @@ Deterministic work lives in scripts. Every Flagsmith call is projected with `--j
 - Honest claims: finite testing is not proof. Minimal means 1-minimal or globally minimal *relative to the reference state*. "Sufficient" is only claimed after exhaustively re-testing all completions.
 - Risk prioritization is a heuristic. It helped on average in held-out synthetic cases but lost to pairwise on MixMart at the tiniest budget.
 - Flags are currently boolean (enabled state). Multivariate values are on the roadmap.
-- The headless Claude Code CLI was not authenticated on our machine, so the Skill A/B was run with Claude Code sub-agents (same model, task, tools and workspace; harness-reported tokens). The method is documented in the benchmark file.
+- The headless Claude Code CLI was not authenticated on our machine, so the Skill A/B was run with Claude Code sub-agents (same model, task, tools and workspace; harness-reported tokens). The method is documented in the benchmark file. In a one-run pilot on a consumer repository, an agent without the skill simply brute-forced all 1,024 states. At 10 flags that works; DoNotMix pays off when 2^N or test time rules brute force out.
 
 ## Future roadmap
 Multivariate and remote-config values · Flagsmith change requests as the approval path · persistent test workers · JS/TS runners · masking resolution by test splitting · contribution to the official Flagsmith skills catalog.
