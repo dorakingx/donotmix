@@ -39,7 +39,8 @@
   "id": "scan",
   "frame": "shots/scan.png",
   "caption": "donotmix scan: 25 states cover every 2- and 3-way combination; 514 real test runs in 16 s",
-  "narration": "Ten flags means one thousand and twenty-four states. DoNotMix builds a covering array that hits every three-way combination in twenty-five states, and runs the real test suite on each, evaluated by the Flagsmith SDK, segment overrides included. Sixteen seconds."
+  "narration": "Ten flags means one thousand and twenty-four states. DoNotMix builds a covering array that hits every three-way combination in twenty-five states, and runs the real test suite on each, evaluated by the Flagsmith SDK, segment overrides included. Sixteen seconds.",
+  "tts": "Ten flags means one thousand and twenty-four states. Do Not Mix builds a covering array that hits every three-way combination in twenty-five states, and runs the real test suite on each, evaluated by the Flagsmith SDK, segment overrides included. Sixteen seconds."
  },
  {
   "id": "overview",
@@ -69,7 +70,8 @@
   "id": "benchmark",
   "frame": "shots/dash_benchmark.png",
   "caption": "Measured on held-out benchmarks with hidden ground truth (docs/BENCHMARKS.md)",
-  "narration": "Measured, not claimed. At the same small test budget, DoNotMix finds about ninety percent of planted faults, where random testing finds about seventy. Minimization recovers the exact cause in over ninety percent of cases, with zero false positives. Where it lost, at the tiniest budget on our demo app, we say so."
+  "narration": "Measured, not claimed. At the same small test budget, DoNotMix finds about ninety percent of planted faults, where random testing finds about seventy. Minimization recovers the exact cause in over ninety percent of cases, with zero false positives. Where it lost, at the tiniest budget on our demo app, we say so.",
+  "tts": "Measured, not claimed. At the same small test budget, Do Not Mix finds about ninety percent of planted faults, where random testing finds about seventy. Minimization recovers the exact cause in over ninety percent of cases, with zero false positives. Where it lost, at the tiniest budget on our demo app, we say so."
  },
  {
   "id": "propose",

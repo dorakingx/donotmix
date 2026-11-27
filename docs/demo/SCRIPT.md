@@ -1,6 +1,8 @@
-# DoNotMix demo video: script, shot list, captions (target 2:30; final cut 2:55)
+# DoNotMix demo video: script, shot list, captions (target 2:30; final cut 2:59)
 
 The authoritative, final shot list and narration are in `scenes.json`; this table is the original plan.
+
+The published cut is narrated by Google Gemini TTS (`gemini-3.8-flash-tts`, voice Charon), built with `DEMO_TTS=gemini python docs/demo/build_video.py`. A scene's optional `tts` field changes only what the voice reads (pronunciation fixes such as "Do Not Mix"). The captions always use `narration`.
 
 Everything shown must be real output from this repository, captured from the local self-hosted Flagsmith and the real MixMart test suite. No mock screens.
 

@@ -4,7 +4,7 @@ Numbers come from `docs/BENCHMARKS.md`, `benchmarks/results/skill_eval/v2/raw.js
 
 - **Project title:** DoNotMix — find the feature-flag combinations that break your app
 - **Tracks:** Track 2 (AI Agents and Feature Flags), Track 3 (Build on Open Source Flagsmith), Track 4 (Flagsmith Agent Skills)
-- **Demo video:** https://youtu.be/qPM4DA0cMEg (public, 2:55)
+- **Demo video:** https://youtu.be/ZpIUmqn0ll8 (public, 2:59; narration: Gemini TTS)
 - **GitHub repository:** https://github.com/dorakingx/donotmix
 - **Live demo:** (none)
 - **Flagsmith parts used:** Feature flags, Segments, Flagsmith CLI, Flagsmith API (bootstrap of the self-hosted instance), Self-hosted Flagsmith

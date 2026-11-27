@@ -1,79 +1,79 @@
 1
-00:00:00,000 --> 00:00:01,924
+00:00:00,000 --> 00:00:02,361
 Feature A works.
 
 2
-00:00:01,924 --> 00:00:05,219
+00:00:02,361 --> 00:00:05,565
 Feature B works. Feature C works.
 
 3
-00:00:05,219 --> 00:00:08,019
+00:00:05,565 --> 00:00:08,593
 But what happens when they work together?
 
 4
-00:00:08,019 --> 00:00:12,163
+00:00:08,593 --> 00:00:13,749
 Safe alone. Dangerous together. Meet DoNotMix.
 
 5
-00:00:12,163 --> 00:00:19,621
+00:00:13,749 --> 00:00:21,505
 In our demo store, every feature flag passes every scenario on its own. Seventy out of seventy tests are green.
 
 6
-00:00:19,621 --> 00:00:34,654
+00:00:21,505 --> 00:00:35,952
 Flagsmith is the source of truth. DoNotMix reads the live Staging environment through the official Flagsmith CLI: flags, segments, and the full environment document, including a segment override that turns AI search on for beta testers.
 
 7
-00:00:34,654 --> 00:00:51,464
+00:00:35,952 --> 00:00:53,408
 Ten flags means one thousand and twenty-four states. DoNotMix builds a covering array that hits every three-way combination in twenty-five states, and runs the real test suite on each, evaluated by the Flagsmith SDK, segment overrides included. Sixteen seconds.
 
 8
-00:00:51,464 --> 00:00:55,478
+00:00:53,408 --> 00:00:57,789
 The verdict: the current Staging state is already broken.
 
 9
-00:00:55,478 --> 00:01:11,197
+00:00:57,789 --> 00:01:14,152
 Three flags together make checkout charge the wrong amount, with no error at all. Delta debugging shrinks the failure to exactly those three flags. Flipping any one of them makes the test pass, and no combination of the other seven flags makes the failure go away.
 
 10
-00:01:11,197 --> 00:01:17,959
+00:01:14,152 --> 00:01:20,871
 It also finds a crash that needs two flags, and a payment bug that only appears when a flag is switched off.
 
 11
-00:01:17,959 --> 00:01:23,895
+00:01:20,871 --> 00:01:26,383
 And one that only beta users hit, because a Flagsmith segment override changes their mix.
 
 12
-00:01:23,895 --> 00:01:44,516
+00:01:26,383 --> 00:01:46,539
 Measured, not claimed. At the same small test budget, DoNotMix finds about ninety percent of planted faults, where random testing finds about seventy. Minimization recovers the exact cause in over ninety percent of cases, with zero false positives. Where it lost, at the tiniest budget on our demo app, we say so.
 
 13
-00:01:44,516 --> 00:01:53,686
+00:01:46,539 --> 00:01:56,033
 Fixing Staging is a human decision. DoNotMix proposes the smallest flag change, and verifies it against the tests before anyone sees it.
 
 14
-00:01:53,686 --> 00:01:57,789
+00:01:56,033 --> 00:02:00,631
 An agent cannot approve it, and cannot apply it without approval.
 
 15
-00:01:57,789 --> 00:02:07,000
+00:02:00,631 --> 00:02:09,445
 A human approves by typing the environment name. Apply then checks that nothing drifted and changes exactly the approved flags through the Flagsmith CLI.
 
 16
-00:02:07,000 --> 00:02:20,193
+00:02:09,445 --> 00:02:22,030
 Here is the real result on Staging. Two flags were switched off and read back. The automatic re-scan finds no live hazard any more. Seven risky combinations are still reachable, so the team knows what to fix in code.
 
 17
-00:02:20,193 --> 00:02:29,114
+00:02:22,030 --> 00:02:31,381
 Every step is in a hash-chained audit log: the agent's refused attempt, the human approval, the apply with read-back, and the re-verification.
 
 18
-00:02:29,114 --> 00:02:42,466
+00:02:31,381 --> 00:02:45,018
 Your coding agent can run the whole workflow with the DoNotMix Agent Skill. In a measured A B test it used sixteen percent fewer tokens and half the tool calls, completed every run, and never changed a flag without approval.
 
 19
-00:02:42,466 --> 00:02:49,279
+00:02:45,018 --> 00:02:52,850
 One docker compose up gives you self-hosted Flagsmith, the demo store, a first scan and the dashboard.
 
 20
-00:02:49,279 --> 00:02:54,817
+00:02:52,850 --> 00:02:58,581
 DoNotMix. Find the combinations that break your app, before your users do.
