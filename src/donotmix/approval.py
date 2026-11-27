@@ -76,10 +76,32 @@ class AuditLog:
 
 
 def _actor() -> str:
+    # DONOTMIX_ACTOR lets people record a handle instead of their OS login name.
+    if os.environ.get("DONOTMIX_ACTOR"):
+        return os.environ["DONOTMIX_ACTOR"]
     try:
         return getpass.getuser()
     except Exception:
         return os.environ.get("USER", "unknown")
+
+
+def redact_actors(entries: list[dict], names: list[str], label: str = "local-user") -> list[dict]:
+    """Display-only copy with the given actor names replaced (the log on disk is untouched)."""
+    hide = {n for n in names if n}
+    return [{**e, "actor": label} if e.get("actor") in hide else e for e in entries]
+
+
+def actors_to_redact() -> list[str]:
+    """Names hidden by DONOTMIX_REDACT_ACTORS: '1' hides the OS login name; otherwise a comma-separated list."""
+    v = os.environ.get("DONOTMIX_REDACT_ACTORS", "").strip()
+    if not v:
+        return []
+    if v.lower() in ("1", "true", "yes"):
+        try:
+            return [getpass.getuser()]
+        except Exception:
+            return [os.environ.get("USER", "")]
+    return [x.strip() for x in v.split(",")]
 
 
 # ---- proposals --------------------------------------------------------------------------

@@ -15,7 +15,7 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from .approval import AuditLog, ApprovalError, approval_record, approve_from_dashboard, apply as do_apply, load_proposal, proposals_dir
+from .approval import AuditLog, ApprovalError, actors_to_redact, approval_record, redact_actors, approve_from_dashboard, apply as do_apply, load_proposal, proposals_dir
 from .config import ProjectConfig
 from .engine import ScanOptions, latest_run, scan
 import os
@@ -87,7 +87,7 @@ def create_app(cfg: ProjectConfig) -> FastAPI:
             p = json.loads(f.read_text())
             rec = approval_record(root, p["id"])
             applied = any(e.get("proposal") == p["id"] and e["event"] == "applied" for e in AuditLog(root).entries())
-            p["approval"] = {"approved": bool(rec), "by": rec.get("actor") if rec else None, "at": rec.get("ts") if rec else None, "applied": applied}
+            p["approval"] = {"approved": bool(rec), "by": (redact_actors([rec], actors_to_redact())[0].get("actor")) if rec else None, "at": rec.get("ts") if rec else None, "applied": applied}
             out.append(p)
         return out
 
@@ -95,7 +95,8 @@ def create_app(cfg: ProjectConfig) -> FastAPI:
     def audit():
         log = AuditLog(root)
         ok, detail = log.verify()
-        return {"intact": ok, "detail": detail, "entries": log.entries()[-200:]}
+        # the chain is verified on the real log; redaction (DONOTMIX_REDACT_ACTORS) only changes what is displayed
+        return {"intact": ok, "detail": detail, "entries": redact_actors(log.entries()[-200:], actors_to_redact())}
 
     @app.post("/api/proposals/{pid}/approve")
     async def approve(pid: str, request: Request):

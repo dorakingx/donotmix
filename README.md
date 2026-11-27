@@ -204,6 +204,7 @@ Reproduce: `python -m benchmarks.run --suite full`, `python -m benchmarks.run --
 * **Agents can't approve.** `donotmix approve` requires an interactive terminal; the dashboard requires the environment name to be typed, an approver name, a CSRF token and a localhost origin.
 * **Exactly what was approved.** The approval binds to a hash of the proposal. Apply refuses edited proposals, re-reads live state and aborts on drift, writes only the approved flags, reads each one back, then re-scans.
 * **Tamper-evident audit log.** `.donotmix/audit.jsonl` is a hash chain covering proposed → approved → applied → reverified (`donotmix audit`).
+* **Actor names.** Audit entries record the OS login name unless `DONOTMIX_ACTOR` sets a handle. For screenshots and demos, `DONOTMIX_REDACT_ACTORS=1` (or a comma-separated list of names) makes the dashboard display `local-user` instead; the chain is still verified on the unmodified log.
 * Secrets stay in environment variables (`.env` is git-ignored; see `.env.example`). The optional LLM receives trimmed evidence only: core, test names, error messages and a few code snippets. It never receives credentials or the environment document.
 
 ## Limitations (honest)

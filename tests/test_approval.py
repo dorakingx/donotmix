@@ -114,3 +114,19 @@ def test_audit_chain_detects_tampering(tmp_path):
     lines[1] = json.dumps(e, sort_keys=True)
     log.path.write_text("\n".join(lines) + "\n")
     assert not log.verify()[0]
+
+
+def test_actor_env_and_display_redaction(tmp_path, monkeypatch):
+    from donotmix.approval import AuditLog, actors_to_redact, redact_actors
+
+    monkeypatch.setenv("DONOTMIX_ACTOR", "handle")
+    e = AuditLog(tmp_path).append("proposed", proposal="P-1")
+    assert e["actor"] == "handle"
+    AuditLog(tmp_path).append("approved", proposal="P-1", actor="Real Name")
+    monkeypatch.setenv("DONOTMIX_REDACT_ACTORS", "Real Name, other")
+    assert actors_to_redact() == ["Real Name", "other"]
+    shown = redact_actors(AuditLog(tmp_path).entries(), actors_to_redact())
+    assert [x["actor"] for x in shown] == ["handle", "local-user"]
+    # display redaction never touches the log on disk, so the hash chain stays intact
+    assert AuditLog(tmp_path).entries()[1]["actor"] == "Real Name"
+    assert AuditLog(tmp_path).verify()[0]
