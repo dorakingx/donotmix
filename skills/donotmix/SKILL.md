@@ -20,7 +20,15 @@ Facts come from executed tests; you explain and coordinate. Never invent results
 - Never target a protected environment (default `Production`). Use Staging/Development.
 - Do not paste whole reports, logs or environment documents into the conversation. Use `--brief`, `--json --jq`, and the scripts below.
 
-## Workflow
+## Fast path: "is <env> safe to release?" (use this first)
+Run `bash scripts/release_check.sh ENV` once. It does preflight, the scan and, if the live state fails, verified mitigation proposals, and prints ONE compact JSON object:
+- `exit`: 0 = clean, 10 = latent, 11 = live state fails.
+- `scan.hazards[]`: `core` (minimal flag values), `tests`, `personas`, `generality`, `repro`.
+- `proposals[]`: `changes`, `resolves`, `still_failing`.
+
+Answer from that JSON. Don't open report.md, source files or references unless setup is missing or the user asks for code-level detail. If it says `no donotmix.yaml`, follow the full workflow below from step 4.
+
+## Full workflow (setup, deeper analysis, applying an approved change)
 1. **Preflight** (one call): `bash scripts/preflight.sh [ENV]`. It prints one JSON line with CLI version, auth, project/env resolution and config status. If `auth` is false, ask the user to run `flagsmith login` or export a host-scoped `FLAGSMITH_API_KEY*` (see references/flagsmith-cli.md). Stop on errors.
 2. **Identify the target**: use the environment the user named; otherwise the `environment:` in donotmix.yaml. Confirm it is not protected.
 3. **Flags and state** (compact): `bash scripts/flags.sh ENV` -> `[{f,on,seg}]`. Segment-scoped flags (`seg>0`) matter for personas.

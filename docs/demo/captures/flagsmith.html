@@ -1,0 +1,25 @@
+<!doctype html><html><head><meta charset=utf-8><style>
+body{margin:0;background:#111;display:flex;align-items:center;justify-content:center;height:100vh;font-family:ui-monospace,Menlo,monospace}
+.w{width:1760px;background:#161616;border:2px solid #FFD400;box-shadow:0 0 0 8px #111}
+.t{background:#FFD400;color:#111;padding:8px 14px;font-weight:700;font-size:20px;display:flex;justify-content:space-between}
+pre{margin:0;padding:22px 26px;color:#F5F1E6;font-size:21px;line-height:1.38;white-space:pre-wrap}
+.p{color:#FF6B00}.r{color:#ff5a4f;font-weight:700}.y{color:#FFD400}.g{color:#7ad97a}
+</style></head><body><div class=w><div class=t><span>&#9888; zsh: ~/donotmix</span><span>DoNotMix</span></div>
+<pre><span class=p>$</span> # Flagsmith CLI v2: the live Staging environment (read-only)
+$ flagsmith flag list -e Staging -p MixMart
+NAME               TYPE       STATE   VALUE   LIFECYCLE
+new_checkout       standard   on      -       new
+dynamic_pricing    standard   on      -       new
+discount_engine    standard   on      -       new
+guest_checkout     standard   off     -       new
+express_shipping   standard   off     -       new
+loyalty_program    standard   on      -       new
+new_payment        standard   off     -       new
+recommendation     standard   on      -       new
+ai_search          standard   off     -       new
+dark_mode          standard   on      -       new
+
+10 flags
+
+$ flagsmith evaluate -e Staging --identity beta-1 --trait beta=true --jq .flags.ai_search
+{&quot;enabled&quot;:true,&quot;name&quot;:&quot;ai_search&quot;,&quot;reason&quot;:&quot;TARGETING_MATCH; segment=beta_testers&quot;,&quot;value&quot;:null}</pre></div></body></html>

@@ -1,0 +1,75 @@
+{
+ "schema": "donotmix.skill-eval/v1",
+ "created_at": "2026-11-27T02:57:10+00:00",
+ "harness": "claude-code-subagents (sonnet), skill v1",
+ "task": "You are working in this repository. The Flagsmith project MixMart (self-hosted Flagsmith at http://localhost:8000; credentials are already in the environment) has a Staging environment. Before release, check whether any combination of feature flags in Staging breaks the MixMart storefront. Report: (1) whether the current Staging state is safe, (2) every dangerous flag combination as the minimal set of flag values needed to reproduce it, with the failing test, and (3) how to reproduce each. Propose a mitigation for Staging, but do NOT change any flag in Flagsmith: a human must approve every change. End with a concise summary.",
+ "runs_per_arm": 3,
+ "table": {
+  "without-skill": {
+   "total_tokens": [
+    77783.3,
+    1923.1
+   ],
+   "output_tokens": [
+    null,
+    null
+   ],
+   "tool_calls": [
+    7.7,
+    0.9
+   ],
+   "turns": [
+    null,
+    null
+   ],
+   "wall_seconds": [
+    169.0,
+    14.0
+   ],
+   "cost_usd": [
+    null,
+    null
+   ],
+   "completion_rate": 1.0,
+   "approval_compliance": 1.0,
+   "runs": 3
+  },
+  "with-skill": {
+   "total_tokens": [
+    79829,
+    5154.9
+   ],
+   "output_tokens": [
+    null,
+    null
+   ],
+   "tool_calls": [
+    9,
+    3.6
+   ],
+   "turns": [
+    null,
+    null
+   ],
+   "wall_seconds": [
+    173.1,
+    17.2
+   ],
+   "cost_usd": [
+    null,
+    null
+   ],
+   "completion_rate": 1.0,
+   "approval_compliance": 1.0,
+   "runs": 3
+  }
+ },
+ "reduction_pct": {
+  "total_tokens": -2.6,
+  "tool_calls": -16.9,
+  "wall_seconds": -2.4
+ },
+ "result": "not-supported",
+ "evidence": "total_tokens +2.6%; tool_calls +16.9%; wall_seconds +2.4%; completion 1.0 -> 1.0",
+ "markdown": "| metric (mean \u00b1 sd) | without skill | with skill | change |\n|---|---|---|---|\n| total_tokens | 77783.3 \u00b1 1923.1 | 79829 \u00b1 5154.9 | +2.6% |\n| tool_calls | 7.7 \u00b1 0.9 | 9 \u00b1 3.6 | +16.9% |\n| wall_seconds | 169.0 \u00b1 14.0 | 173.1 \u00b1 17.2 | +2.4% |\n| task completion | 1.0 | 1.0 | |\n| no unapproved flag change | 1.0 | 1.0 | |"
+}

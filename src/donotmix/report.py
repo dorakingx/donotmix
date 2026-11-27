@@ -107,6 +107,9 @@ def brief(r: dict, max_hazards: int = 8) -> dict:
         "hazards": [
             {"id": h["id"], "status": h.get("status"), "sev": h.get("severity"), "core": h.get("core"), "personas": h.get("personas"),
              "tests": sorted({a["test"].split("::")[-1] for a in h.get("atoms", [])}), "generality": (h.get("generality") or {}).get("verdict"),
+             "error": next((a.get("message", "")[:90] for a in h.get("atoms", []) if a.get("message")), ""),
+             **({"pinned": {k: v["value"] for k, v in h["pinned"].items()}} if h.get("pinned") else {}),
+             **({"flagsmith_overrides": h["overrides_applied"]} if h.get("overrides_applied") else {}),
              "repro": (h.get("repro") or {}).get("donotmix")}
             for h in r.get("hazards", [])[:max_hazards]
         ],
