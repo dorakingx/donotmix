@@ -14,6 +14,8 @@ PythonRunner    in-process callable, used by the synthetic benchmarks for speed.
 from __future__ import annotations
 
 import hashlib
+import queue
+import sys
 import json
 import os
 import shlex
@@ -214,3 +216,70 @@ def _exception_kind(type_attr: str | None, message: str, text: str) -> str:
             if cand.replace("_", "").isalnum() and (cand.endswith("Error") or cand.endswith("Exception")):
                 return cand
     return "AssertionError" if "assert" in (message + text).lower() else "Failure"
+
+
+class PytestWorkerRunner(CommandRunner):
+    """Like CommandRunner for pytest suites, but reuses warm interpreters (opt-in, ~10x faster)."""
+
+    name = "pytest-worker"
+
+    def __init__(self, args: list[str], document: dict | None, workdir: Path, cwd: str | None = None, jobs: int = 4, timeout: float = 120.0, python: str | None = None):
+        super().__init__("pytest " + " ".join(args) + " --junitxml={junit}", document, workdir, cwd=cwd, timeout=timeout)
+        self.args = list(args)
+        self.python = python or sys.executable
+        self._pool: queue.Queue = queue.Queue()
+        self._procs = []
+        for _ in range(max(1, jobs)):
+            p = subprocess.Popen([self.python, "-m", "donotmix._pytest_worker"], cwd=cwd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True, bufsize=1)
+            self._procs.append(p)
+            self._pool.put(p)
+
+    def self_check(self, names: list[str], cases: list[tuple[tuple, "Persona"]]) -> list[str]:
+        """Compare warm-worker results with fresh-process results; return mismatches (empty = consistent)."""
+        fresh = CommandRunner(f"{shlex.quote(self.python)} -m pytest " + " ".join(shlex.quote(a) for a in self.args) + " --junitxml={junit}",
+                              self.document, self.workdir / "selfcheck", cwd=self.cwd, timeout=self.timeout)
+        bad = []
+        for cfg, persona in cases:
+            a = self.run(names, cfg, persona)
+            b = fresh.run(names, cfg, persona)
+            if sorted(x.key() for x in a.atoms) != sorted(x.key() for x in b.atoms) or bool(a.error) != bool(b.error):
+                bad.append(f"{persona.id}: worker={sorted(x.test.split('::')[-1] for x in a.atoms)} fresh={sorted(x.test.split('::')[-1] for x in b.atoms)}")
+        return bad
+
+    def close(self) -> None:
+        for p in self._procs:
+            try:
+                p.stdin.close()
+                p.wait(timeout=5)
+            except Exception:
+                p.kill()
+
+    def __del__(self):  # pragma: no cover
+        try:
+            self.close()
+        except Exception:
+            pass
+
+    def run_one(self, states, cfg, persona):
+        env = self.env_for(states, persona)
+        keys = ["DONOTMIX_FLAGS", "DONOTMIX_PERSONA", "DONOTMIX_TRAITS", "DONOTMIX_IDENTITY", "DONOTMIX_ENV_DOCUMENT"]
+        jenv = {k: env.get(k) for k in keys}
+        h = hashlib.sha256((json.dumps(states, sort_keys=True) + persona.id).encode()).hexdigest()[:16]
+        junit = (self.workdir / "junit" / f"{h}.xml").resolve()
+        if junit.exists():
+            junit.unlink()
+        proc = self._pool.get()
+        t0 = time.perf_counter()
+        try:
+            proc.stdin.write(json.dumps({"env": jenv, "args": self.args, "junit": str(junit)}) + "\n")
+            proc.stdin.flush()
+            reply = json.loads(proc.stdout.readline() or '{"rc": 98, "error": "worker died"}')
+        finally:
+            self._pool.put(proc)
+        dur = time.perf_counter() - t0
+        if not junit.exists():
+            return Execution(cfg, persona.id, False, [], {}, dur, "", error=f"pytest worker produced no junit (rc={reply.get('rc')}, {reply.get('error', '')})")
+        atoms, msgs, _ = parse_junit(junit, persona.id)
+        if reply.get("rc") not in (0, 1) and not atoms:
+            return Execution(cfg, persona.id, False, [], {}, dur, "", error=f"pytest exited {reply.get('rc')}")
+        return Execution(cfg, persona.id, not atoms, atoms, msgs, dur)

@@ -22,13 +22,18 @@ FLAG_NAMES = (
 )
 
 
-@lru_cache(maxsize=8)
 def client(document_path: str | None = None) -> Flagsmith:
     path = document_path or os.environ.get("DONOTMIX_ENV_DOCUMENT") or os.environ.get("MIXMART_ENV_DOCUMENT")
+    return _client(path, os.environ.get("FLAGSMITH_ENVIRONMENT_KEY"))
+
+
+@lru_cache(maxsize=8)
+def _client(path: str | None, environment_key: str | None) -> Flagsmith:
+    # cache keyed by the document actually used, so a long-lived process never serves stale flags
     if path:
         return Flagsmith(offline_mode=True, offline_handler=LocalFileHandler(path))
     return Flagsmith(
-        environment_key=os.environ["FLAGSMITH_ENVIRONMENT_KEY"],
+        environment_key=environment_key,
         api_url=os.environ.get("FLAGSMITH_SDK_API_URL", "http://localhost:8000/api/v1/"),
     )
 

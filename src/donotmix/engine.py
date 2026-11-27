@@ -104,6 +104,13 @@ def make_runner(cfg: ProjectConfig, snap: dict, run_dir: Path) -> Runner:
             raise ConfigError("runner.command is empty")
         cwd = str((cfg.root / rc.cwd).resolve()) if rc.cwd else str(cfg.root)
         return CommandRunner(rc.command, snap["document"], run_dir / "exec", cwd=cwd, timeout=rc.timeout)
+    if rc.type == "pytest-worker":
+        import shlex
+
+        from .runner import PytestWorkerRunner
+
+        cwd = str((cfg.root / rc.cwd).resolve()) if rc.cwd else str(cfg.root)
+        return PytestWorkerRunner(shlex.split(rc.command), snap["document"], run_dir / "exec", cwd=cwd, jobs=rc.jobs, timeout=rc.timeout)
     if rc.type == "python":
         import importlib
 
@@ -383,6 +390,13 @@ def scan(cfg: ProjectConfig, opts: ScanOptions) -> dict:
         return report
 
     runner = make_runner(cfg, snap, run_dir)
+    if getattr(runner, "self_check", None):
+        # warm interpreters are only trusted after they agree with fresh processes on a few states
+        probe = [tests[0]] + tests[1:3]
+        _log(opts, f"self-check: comparing warm pytest workers with fresh processes on {len(probe)} states")
+        bad = runner.self_check(space.names, [(c, p) for c in probe for p in personas])
+        if bad:
+            raise RunnerError("pytest-worker results differ from fresh processes (the app keeps state between runs); use runner.type: command. " + "; ".join(bad[:3]))
     _log(opts, f"execute: {len(tests)} configurations x {len(personas)} personas, {jobs} jobs")
     t_exec = time.perf_counter()
     work = [(c, p) for c in tests for p in personas]
@@ -426,7 +440,8 @@ def scan(cfg: ProjectConfig, opts: ScanOptions) -> dict:
             envs.append(f"DONOTMIX_IDENTITY={persona.identifier}")
         if persona.traits:
             envs.append(f"DONOTMIX_TRAITS='{json.dumps(dict(persona.traits))}'")
-        cmd = cfg.runner.command.replace(" --junitxml={junit}", "").replace("{junit}", "/dev/null") if cfg.runner.type == "command" else f"python -c 'import {cfg.runner.target}'"
+        cmd = (cfg.runner.command.replace(" --junitxml={junit}", "").replace("{junit}", "/dev/null") if cfg.runner.type == "command"
+               else "python -m pytest " + cfg.runner.command if cfg.runner.type == "pytest-worker" else f"python -c 'import {cfg.runner.target}'")
         h["repro"] = {"document": _rel(p, root), "persona": persona.id, "command": " ".join(envs) + " " + cmd,
                       "donotmix": f"donotmix reproduce {h['id']} --run {run_id}"}
 

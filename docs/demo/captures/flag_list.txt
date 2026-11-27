@@ -1,0 +1,13 @@
+NAME               TYPE       STATE   VALUE   LIFECYCLE
+new_checkout       standard   on      -       new
+dynamic_pricing    standard   on      -       new
+discount_engine    standard   on      -       new
+guest_checkout     standard   off     -       new
+express_shipping   standard   off     -       new
+loyalty_program    standard   on      -       new
+new_payment        standard   off     -       new
+recommendation     standard   on      -       new
+ai_search          standard   off     -       new
+dark_mode          standard   on      -       new
+
+10 flags

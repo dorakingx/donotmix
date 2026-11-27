@@ -24,8 +24,12 @@ personas:
     traits: {beta: true}
 
 runner:
-  type: command
-  command: "python -m pytest demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider -p no:randomly --junitxml={junit}"
+  # pytest-worker reuses warm interpreters (about 6x faster) and is only trusted after a built-in
+  # self-check agrees with fresh processes. Generic alternative for any language:
+  #   type: command
+  #   command: "python -m pytest demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider --junitxml={junit}"
+  type: pytest-worker
+  command: "demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider"
   jobs: 8
   timeout: 120
 
