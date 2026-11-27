@@ -1,0 +1,7 @@
+$ donotmix apply P-1127030100-discount_e-recommenda      # an agent tries to skip approval
+donotmix: proposal P-1127030100-discount_e-recommenda has no human approval. Ask the user to run: donotmix approve P-1127030100-discount_e-recommenda
+exit code: 6
+
+$ donotmix approve P-1127030100-discount_e-recommenda    # from a non-interactive agent shell
+donotmix: approval requires a human at an interactive terminal (or the dashboard). Ask the user to run: donotmix approve P-1127030100-discount_e-recommenda
+exit code: 6

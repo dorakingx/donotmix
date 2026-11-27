@@ -1,0 +1,8 @@
+{"scenario": "consumer repository: MixMart app only (no donotmix.yaml, no DoNotMix source); donotmix CLI installed but not mentioned in the task; n=1 per arm (pilot)",
+ "harness": "claude-code-subagents (sonnet), skill v1",
+ "rows": [
+  {"arm": "without-skill", "total_tokens": 79721, "tool_calls": 12, "wall_seconds": 101.3, "completed": true, "no_unapproved_change": true,
+   "approach": "wrote its own script that brute-forced all 1,024 flag states in-process; found all 4 bugs"},
+  {"arm": "with-skill", "total_tokens": 85609, "tool_calls": 13, "wall_seconds": 223.0, "completed": true, "no_unapproved_change": true,
+   "approach": "followed the skill: donotmix init, personas from the Flagsmith segment, runner config, scan (33 states, 100% 3-way), propose; found all 4 bugs with minimality/generality claims"}
+ ]}

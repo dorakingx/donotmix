@@ -153,9 +153,48 @@ Full `donotmix scan` (risk, t=3): 25 configurations, 514 executions incl. minimi
 | HZ-6 | latent | guest_checkout=on, new_payment=on | beta_tester, shopper | test_guest_checkout_policy | held-in-sample | - |
 | HZ-7 | latent | recommendation=on, ai_search=on | shopper | test_recommendations | held-in-sample | B4-ai-search-normalised-ids |
 
+<a id="e5"></a>
 ## E5 - Agent Skill token efficiency
 
-Not run yet (`python benchmarks/skill_eval.py`).
+Task (identical for every run): You are working in this repository. The Flagsmith project MixMart (self-hosted Flagsmith at http://localhost:8000; credentials are already in the environment) has a Staging environment. Before release, check whether any combination of feature flags in Staging breaks the MixMart storefront. Report: (1) whether the current Staging state is safe, (2) every dangerous flag combination as the minimal set of flag values needed to reproduce it, with the failing test, and (3) how to reproduce each. Propose a mitigation for Staging, but do NOT change any flag in Flagsmith: a human must approve every change. End with a concise summary.
+
+Method: claude-code-subagents (sonnet). Same model (Sonnet), same task prompt, same tools, the same repository commit and the same live Flagsmith Staging state. The arms differ only by the skill directory and the line telling the agent where SKILL.md is. Token counts are the totals reported by the Claude Code harness per sub-agent (input + output, including cached context). A large fixed share is the harness's own system prompt and tool definitions. We first tried headless `claude -p` with stream-json usage; the CLI on this machine was not logged in, so those runs produced no data and are not reported. Grading is deterministic (`benchmarks/skill_eval.py`): the verdict, the 3-way core, the segment bug and a reproduction must all be present, and Staging must be unchanged.
+
+### Skill v1 (3 runs per arm; full 12-step workflow)
+
+| metric (mean ± sd) | without skill | with skill | change |
+|---|---|---|---|
+| total_tokens | 77783.3 ± 1923.1 | 79829 ± 5154.9 | +2.6% |
+| tool_calls | 7.7 ± 0.9 | 9 ± 3.6 | +16.9% |
+| wall_seconds | 169.0 ± 14.0 | 173.1 ± 17.2 | +2.4% |
+| task completion | 1.0 | 1.0 | |
+| no unapproved flag change | 1.0 | 1.0 | |
+
+Result for H4: **not-supported** (total_tokens +2.6%; tool_calls +16.9%; wall_seconds +2.4%; completion 1.0 -> 1.0)
+
+### Skill v2 (3 runs per arm; v2 = one-call `release_check.sh` fast path)
+
+| metric (mean ± sd) | without skill | with skill | change |
+|---|---|---|---|
+| total_tokens | 79946.3 ± 1915.6 | 66764.3 ± 95.5 | -16.5% |
+| tool_calls | 5.7 ± 0.5 | 3 ± 0.0 | -47.4% |
+| wall_seconds | 90.2 ± 13.9 | 60.6 ± 3.8 | -32.8% |
+| task completion | 1.0 | 1.0 | |
+| no unapproved flag change | 1.0 | 1.0 | |
+
+Result for H4: **supported** (total_tokens -16.5%; tool_calls -47.4%; wall_seconds -32.8%; completion 1.0 -> 1.0)
+
+### Pilot: consumer repository (n = 1 per arm)
+
+consumer repository: MixMart app only (no donotmix.yaml, no DoNotMix source); donotmix CLI installed but not mentioned in the task; n=1 per arm (pilot)
+
+| arm | tokens | tool calls | wall s | completed | approach |
+|---|---|---|---|---|---|
+| without-skill | 79721 | 12 | 101.3 | True | wrote its own script that brute-forced all 1,024 flag states in-process; found all 4 bugs |
+| with-skill | 85609 | 13 | 223.0 | True | followed the skill: donotmix init, personas from the Flagsmith segment, runner config, scan (33 states, 100% 3-way), propose; found all 4 bugs with minimality/generality claims |
+
+Reading: with 10 flags and millisecond tests, a capable agent can brute-force all 1,024 states itself. DoNotMix's covering arrays matter when 2^N or test time makes that impossible (for example 30 flags: about a billion states vs 34 tests), and when you need minimality and generality claims plus an approval trail rather than an ad-hoc script.
+
 
 ## Threats to validity
 

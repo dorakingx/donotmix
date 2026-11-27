@@ -1,0 +1,43 @@
+> snapshot: reading Flagsmith environment (read-only)
+> analysis: scanning source for flag interactions
+> plan: strategy=risk t=3 budget=None seed=0
+> self-check: comparing warm pytest workers with fresh processes on 3 states
+> execute: 25 configurations x 2 personas, 8 jobs
+> minimize: delta debugging + sensitivity + generality checks
+> explain: rule-based
+
+  [LIVE_HAZARD] The current Staging state fails (3 live hazard(s)); 4 latent hazard(s) more.
+  tested 25 configs x 2 personas | 2-way 100% | 3-way 100% | 514 executions | 16.16s | analysis: rule-based
+
+  HZ-1 LIVE   new_checkout=on + dynamic_pricing=on + discount_engine=on -> test_member_checkout_total (AssertionError)
+      core: new_checkout=True, dynamic_pricing=True, discount_engine=True   generality: sufficient (fails 64/96, masked 32, exhaustive)
+      repro: donotmix reproduce HZ-1 --run 20261127T030036Z
+
+  HZ-2 LIVE   new_checkout=on + dynamic_pricing=on + discount_engine=on + loyalty_program=on -> test_loyalty_points (AssertionError)
+      core: new_checkout=True, dynamic_pricing=True, discount_engine=True, loyalty_program=True   generality: sufficient (fails 32/48, masked 16, exhaustive)
+      repro: donotmix reproduce HZ-2 --run 20261127T030036Z
+
+  HZ-3 LIVE   recommendation=on -> test_recommendations (AssertionError)
+      core: recommendation=True   generality: held-in-sample (fails 32/32, sampled)
+      repro: donotmix reproduce HZ-3 --run 20261127T030036Z
+
+  HZ-4 LATENT express_shipping=off + new_payment=on -> test_loyalty_points (PaymentError)
+      core: express_shipping=False, new_payment=True   generality: sufficient (fails 128/128, exhaustive)
+      repro: donotmix reproduce HZ-4 --run 20261127T030036Z
+
+  HZ-5 LATENT guest_checkout=on + loyalty_program=on -> test_guest_checkout_policy (AttributeError)
+      core: guest_checkout=True, loyalty_program=True   generality: held-in-sample (fails 24/32, masked 8, sampled)
+      repro: donotmix reproduce HZ-5 --run 20261127T030036Z
+
+  HZ-6 LATENT guest_checkout=on + new_payment=on -> test_guest_checkout_policy (PaymentError)
+      core: guest_checkout=True, new_payment=True   generality: held-in-sample (fails 32/32, sampled)
+      repro: donotmix reproduce HZ-6 --run 20261127T030036Z
+
+  HZ-7 LATENT recommendation=on + ai_search=on -> test_recommendations (AssertionError)
+      core: recommendation=True, ai_search=True   generality: held-in-sample (fails 32/32, sampled)
+      repro: donotmix reproduce HZ-7 --run 20261127T030036Z
+
+  report: .donotmix/runs/20261127T030036Z/report.md   (dashboard: donotmix dashboard)
+  Finite testing: a clean result means no failure was observed under the executed configurations, tests and personas. It is not a proof of safety.
+
+exit code: 11
