@@ -87,7 +87,19 @@
   "id": "approve",
   "frame": "shots/dash_approve.png",
   "caption": "Only a human approves: type the environment name and sign. Apply is drift-checked and audited.",
-  "narration": "A human approves by typing the environment name. Apply then checks that nothing drifted, changes exactly the approved flags through the Flagsmith CLI, re-scans, and writes a tamper-evident audit log."
+  "narration": "A human approves by typing the environment name. Apply then checks that nothing drifted and changes exactly the approved flags through the Flagsmith CLI."
+ },
+ {
+  "id": "after-apply",
+  "frame": "shots/after_overview.png",
+  "caption": "After the approved apply: no live hazard on Staging (exit 11 -> 10); 7 latent combinations remain",
+  "narration": "Here is the real result on Staging. Two flags were switched off and read back. The automatic re-scan finds no live hazard any more. Seven risky combinations are still reachable, so the team knows what to fix in code."
+ },
+ {
+  "id": "audit",
+  "frame": "shots/after_audit.png",
+  "caption": "Hash-chained audit log: refused, approved by a human, applied, read back, re-verified",
+  "narration": "Every step is in a hash-chained audit log: the agent's refused attempt, the human approval, the apply with read-back, and the re-verification."
  },
  {
   "id": "skill",

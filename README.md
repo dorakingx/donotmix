@@ -44,7 +44,7 @@ _Real output, trimmed. MixMart, the demo store in this repo, contains intentiona
 | **Reaction Matrix** | **Human approval gate** |
 | ![Reaction matrix](docs/assets/dash_matrix.png) | ![Approval: type the environment name](docs/assets/dash_approve.png) |
 
-**Demo video (2:36):** [`docs/demo/out/donotmix-demo.mp4`](docs/demo/out/donotmix-demo.mp4). It is built from real captures by [`docs/demo/build_video.py`](docs/demo/build_video.py), with the script in [`docs/demo/SCRIPT.md`](docs/demo/SCRIPT.md).
+**Demo video (2:55):** [`docs/demo/out/donotmix-demo.mp4`](docs/demo/out/donotmix-demo.mp4). It is built from real captures by [`docs/demo/build_video.py`](docs/demo/build_video.py), with the script in [`docs/demo/SCRIPT.md`](docs/demo/SCRIPT.md).
 
 ## Why feature interactions matter
 

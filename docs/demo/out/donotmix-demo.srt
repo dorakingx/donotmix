@@ -55,17 +55,25 @@ Fixing Staging is a human decision. DoNotMix proposes the smallest flag change, 
 An agent cannot approve it, and cannot apply it without approval.
 
 15
-00:01:57,789 --> 00:02:10,321
-A human approves by typing the environment name. Apply then checks that nothing drifted, changes exactly the approved flags through the Flagsmith CLI, re-scans, and writes a tamper-evident audit log.
+00:01:57,789 --> 00:02:07,000
+A human approves by typing the environment name. Apply then checks that nothing drifted and changes exactly the approved flags through the Flagsmith CLI.
 
 16
-00:02:10,321 --> 00:02:23,673
-Your coding agent can run the whole workflow with the DoNotMix Agent Skill. In a measured A B test it used sixteen percent fewer tokens and half the tool calls, completed every run, and never changed a flag without approval.
+00:02:07,000 --> 00:02:20,193
+Here is the real result on Staging. Two flags were switched off and read back. The automatic re-scan finds no live hazard any more. Seven risky combinations are still reachable, so the team knows what to fix in code.
 
 17
-00:02:23,673 --> 00:02:30,486
-One docker compose up gives you self-hosted Flagsmith, the demo store, a first scan and the dashboard.
+00:02:20,193 --> 00:02:29,114
+Every step is in a hash-chained audit log: the agent's refused attempt, the human approval, the apply with read-back, and the re-verification.
 
 18
-00:02:30,486 --> 00:02:36,024
+00:02:29,114 --> 00:02:42,466
+Your coding agent can run the whole workflow with the DoNotMix Agent Skill. In a measured A B test it used sixteen percent fewer tokens and half the tool calls, completed every run, and never changed a flag without approval.
+
+19
+00:02:42,466 --> 00:02:49,279
+One docker compose up gives you self-hosted Flagsmith, the demo store, a first scan and the dashboard.
+
+20
+00:02:49,279 --> 00:02:54,817
 DoNotMix. Find the combinations that break your app, before your users do.

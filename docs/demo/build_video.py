@@ -14,6 +14,8 @@ import json
 import shutil
 import subprocess
 import sys
+import tempfile
+import time
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -23,9 +25,16 @@ VOICE = "Samantha"
 RATE = "178"
 
 
-def chrome_shot(url: str, png: Path, wait_ms: int = 4000) -> None:
-    subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1", "--window-size=1920,1080",
-                    f"--virtual-time-budget={wait_ms}", f"--screenshot={png}", url], check=True, capture_output=True, timeout=120)
+def chrome_shot(url: str, png: Path, wait_ms: int = 4000, attempts: int = 3) -> None:
+    # A fresh profile per call avoids profile-lock failures between back-to-back headless launches.
+    for i in range(attempts):
+        with tempfile.TemporaryDirectory(prefix="dnm-chrome-") as prof:
+            r = subprocess.run([CHROME, "--headless=new", "--disable-gpu", "--hide-scrollbars", "--force-device-scale-factor=1", "--window-size=1920,1080",
+                                f"--user-data-dir={prof}", f"--virtual-time-budget={wait_ms}", f"--screenshot={png}", url], capture_output=True, timeout=120)
+        if r.returncode == 0 and png.exists():
+            return
+        time.sleep(1 + i)
+    raise RuntimeError(f"headless Chrome failed for {url}: {r.stderr.decode(errors='replace')[-400:]}")
 
 
 def wrap(inner_png: Path, caption: str, out_html: Path) -> None:
