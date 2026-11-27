@@ -1,0 +1,172 @@
+"""Human-readable reports (Markdown, self-contained HTML) and the compact agent brief."""
+
+from __future__ import annotations
+
+import html
+import json
+
+
+def _lit(k, v) -> str:
+    return f"{k}={'on' if v is True else 'off' if v is False else v}"
+
+
+def _lits(d: dict) -> str:
+    return ", ".join(f"`{_lit(k, v)}`" for k, v in d.items()) or "(none)"
+
+
+def _pct(c: dict | None) -> str:
+    if not c:
+        return "n/a"
+    return f"{100 * c['ratio']:.1f}% ({c['covered']}/{c['total']})"
+
+
+def render_markdown(r: dict) -> str:
+    v = r.get("verdict", {})
+    env = r.get("environment", {})
+    e = r.get("execution", {})
+    cov = r.get("coverage") or r.get("coverage_planned") or {}
+    out = [
+        "# DoNotMix Safety Report",
+        "",
+        f"> **{v.get('status')}** - {v.get('summary', '')}",
+        "",
+        f"- Environment: **{(env.get('environment') or {}).get('name')}** (project {env.get('project')}, {env.get('api_url')}), state hash `{env.get('state_hash')}`",
+        f"- Snapshot source: {env.get('source')} ({r['mode']['flagsmith']}), fetched {env.get('fetched_at')}",
+        f"- Analysis mode: {r['mode'].get('ai')}",
+        f"- Plan: {r['plan']['strategy']} (t={r['plan']['strength']}, seed={r['plan']['seed']}), {r['plan']['configs']} configurations x {len(r.get('personas', []))} personas",
+        f"- Feasible configurations: {r['constraints'].get('feasible_configs')} of {r['constraints'].get('total_configs')}",
+        f"- Coverage: 2-way {_pct(cov.get('2'))}, 3-way {_pct(cov.get('3'))}",
+    ]
+    if e:
+        out.append(f"- Executions: {e.get('executions_plan')} plan + {e.get('executions_minimize')} minimization, {e.get('exec_seconds')}s execution, {e.get('total_seconds')}s total")
+    out += ["", f"_{v.get('caveat', '')}_", ""]
+    if r["constraints"].get("baseline_violations"):
+        out.append(f"**Warning:** the live state violates constraint(s) {r['constraints']['baseline_violations']}.\n")
+    hz = r.get("hazards", [])
+    out.append(f"## Hazards ({len(hz)})\n")
+    if not hz:
+        out.append("No failing flag combination observed.\n")
+    for h in hz:
+        out += [f"### {h['id']} [{h.get('status', '').upper()} / {h.get('severity')}] {h.get('title', '')}", ""]
+        out.append(f"- **Minimal failing condition (core):** {_lits(h.get('core', {}))}")
+        if h.get("pinned"):
+            out.append("- Implied by constraints: " + ", ".join(f"`{_lit(k, x['value'])}` ({', '.join(x['by'])})" for k, x in h["pinned"].items()))
+        if h.get("overrides_applied"):
+            out.append("- Flagsmith overrides for this persona: " + _lits(h["overrides_applied"]))
+        if "trigger" in h:
+            out.append(f"- Trigger from {h.get('reference')}: {_lits(h['trigger'])} ({h.get('trigger_claim')})")
+        g = h.get("generality") or {}
+        if g:
+            out.append(f"- Generality: **{g.get('verdict')}** - fails in {g.get('failed')}/{g.get('checked')} completions"
+                       + (" (exhaustive)" if g.get("exhaustive") else " (sampled)") + (f", masked {g['masked']}" if g.get("masked") else ""))
+        out.append(f"- Personas: {', '.join(h.get('personas', []))}; class: {h.get('failure_class')}")
+        out.append(f"- Diff from live state to reproduce: {_lits(h.get('repro_diff_from_live', {}))}")
+        out.append(f"- Extra tests spent minimizing: {h.get('minimization_tests')}")
+        out.append("- Failing tests:")
+        for a in h.get("atoms", [])[:6]:
+            out.append(f"  - `{a['test']}` [{a['kind']}] ({a['persona']}): {a.get('message', '')[:160]}")
+        if h.get("repro"):
+            out += ["", "Reproduce:", "```bash", h["repro"]["donotmix"], h["repro"]["command"], "```"]
+        ex = h.get("explanation") or {}
+        if ex:
+            out += ["", f"Analysis ({ex.get('mode')}):"]
+            out += [f"- [verified] {x}" for x in ex.get("verified", [])]
+            out += [f"- [heuristic] {x}" for x in ex.get("reasoning", [])]
+            if ex.get("llm"):
+                l = ex["llm"]
+                out.append(f"- [LLM, unverified] {l.get('root_cause_hypothesis')}")
+                out += [f"  - fix idea: {x}" for x in l.get("fix_suggestions", [])]
+            out.append("- Suggested next steps:")
+            out += [f"  - {x}" for x in ex.get("fix_suggestions", [])]
+        if h.get("code_refs"):
+            out += ["", "Related code:"]
+            for c in h["code_refs"][:4]:
+                out += [f"`{c['file']}:{c['line']}` ({c['scope']})", "```", c["snippet"], "```"]
+        out.append("")
+    ai = r.get("ai") or {}
+    out += ["## AI usage", "", f"- Mode: {ai.get('mode')}; calls {ai.get('llm_calls', 0)}; tokens in/out {ai.get('input_tokens', 0)}/{ai.get('output_tokens', 0)}", ""]
+    out += ["## Constraints", ""]
+    for c in r["constraints"].get("declared", []):
+        out.append(f"- `{c['id']}`: `{c['rule']}` {('- ' + c['reason']) if c.get('reason') else ''}")
+    out += ["", f"Generated by DoNotMix {r.get('donotmix_version')} (commit {r.get('git_commit')}), run {r.get('run_id')}.", ""]
+    return "\n".join(out)
+
+
+def brief(r: dict, max_hazards: int = 8) -> dict:
+    """Token-efficient summary for coding agents (no logs, no snippets)."""
+    v = r.get("verdict", {})
+    return {
+        "status": v.get("status"),
+        "exit_code": v.get("exit_code"),
+        "summary": v.get("summary"),
+        "run": r.get("run_id"),
+        "env": (r.get("environment") or {}).get("environment", {}).get("name"),
+        "state_hash": (r.get("environment") or {}).get("state_hash"),
+        "mode": r.get("mode"),
+        "tested": {"configs": r["plan"]["configs"], "cov2": (r.get("coverage") or {}).get("2", {}).get("ratio"), "cov3": (r.get("coverage") or {}).get("3", {}).get("ratio")},
+        "hazards": [
+            {"id": h["id"], "status": h.get("status"), "sev": h.get("severity"), "core": h.get("core"), "personas": h.get("personas"),
+             "tests": sorted({a["test"].split("::")[-1] for a in h.get("atoms", [])}), "generality": (h.get("generality") or {}).get("verdict"),
+             "repro": (h.get("repro") or {}).get("donotmix")}
+            for h in r.get("hazards", [])[:max_hazards]
+        ],
+        "next": _next_steps(r),
+    }
+
+
+def _next_steps(r: dict) -> list[str]:
+    st = r.get("verdict", {}).get("status")
+    if st == "LIVE_HAZARD":
+        return ["donotmix propose --json", "ask the human to review and run: donotmix approve <proposal-id>", "donotmix apply <proposal-id>"]
+    if st == "LATENT_HAZARDS":
+        return ["share the hazards with the team; add constraints or fix code", "donotmix reproduce <HZ-id>"]
+    return []
+
+
+# --------------------------------------------------------------------------------------
+
+CSS = """
+:root{--y:#FFD400;--k:#111111;--o:#FF6B00;--w:#F5F1E6;--r:#D7261E;--g:#2F7D32;--m:#6b665c}
+*{box-sizing:border-box}body{margin:0;background:var(--w);color:var(--k);font:15px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace}
+header{background:var(--k);color:var(--w);padding:20px 24px;border-bottom:8px solid var(--y)}
+header h1{margin:0;font-size:22px;letter-spacing:.04em}header small{color:var(--y)}
+main{max-width:1000px;margin:0 auto;padding:16px}
+.verdict{border:3px solid var(--k);padding:14px 16px;margin:16px 0;background:#fff}
+.verdict b{font-size:18px}.LIVE_HAZARD{background:repeating-linear-gradient(-45deg,var(--y) 0 14px,var(--k) 14px 28px);padding:6px}
+.LIVE_HAZARD .verdict,.LATENT_HAZARDS .verdict{margin:0}
+.hz{border:2px solid var(--k);background:#fff;margin:14px 0;padding:12px 14px}
+.tag{display:inline-block;border:2px solid var(--k);padding:0 6px;margin-right:6px;font-weight:700}
+.live{background:var(--r);color:#fff}.latent{background:var(--o)}
+pre{background:var(--k);color:var(--w);padding:10px;overflow:auto;font-size:12px}
+code{background:#ece6d6;padding:0 3px}table{border-collapse:collapse}td,th{border:1px solid #bbb;padding:3px 6px;font-size:13px}
+"""
+
+
+def render_html(r: dict) -> str:
+    v = r.get("verdict", {})
+    esc = html.escape
+    parts = [f"<!doctype html><html><head><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>DoNotMix report</title><style>{CSS}</style></head><body>",
+             "<header><h1>&#9888; DoNotMix Safety Report</h1><small>Safe alone. Dangerous together.</small></header><main>",
+             f"<div class='{esc(v.get('status', ''))}'><div class=verdict><b>{esc(str(v.get('status')))}</b><br>{esc(v.get('summary', ''))}<br><small>{esc(v.get('caveat', ''))}</small></div></div>"]
+    env = r.get("environment", {})
+    parts.append(f"<p>Environment <b>{esc(str((env.get('environment') or {}).get('name')))}</b> &middot; {esc(str(env.get('api_url')))} &middot; snapshot {esc(str(r['mode']['flagsmith']))} &middot; analysis {esc(str(r['mode'].get('ai')))}</p>")
+    cov = r.get("coverage") or {}
+    parts.append("<table><tr><th>configs</th><th>2-way</th><th>3-way</th><th>hazards</th></tr>"
+                 f"<tr><td>{r['plan']['configs']}</td><td>{esc(_pct(cov.get('2')))}</td><td>{esc(_pct(cov.get('3')))}</td><td>{len(r.get('hazards', []))}</td></tr></table>")
+    for h in r.get("hazards", []):
+        st = h.get("status", "")
+        parts.append(f"<div class=hz><span class='tag {esc(st)}'>{esc(st.upper())}</span><span class=tag>{esc(h['id'])}</span><b>{esc(h.get('title', ''))}</b>")
+        parts.append(f"<p>Core: {esc(', '.join(_lit(k, x) for k, x in h.get('core', {}).items()))}<br>Generality: {esc(str((h.get('generality') or {}).get('verdict')))}"
+                     f" ({(h.get('generality') or {}).get('failed')}/{(h.get('generality') or {}).get('checked')})<br>Personas: {esc(', '.join(h.get('personas', [])))}</p>")
+        if h.get("repro"):
+            parts.append(f"<pre>{esc(h['repro']['donotmix'])}\n{esc(h['repro']['command'])}</pre>")
+        ex = h.get("explanation") or {}
+        if ex.get("verified"):
+            parts.append("<ul>" + "".join(f"<li><b>verified</b> {esc(x)}</li>" for x in ex["verified"]) + "".join(f"<li>heuristic: {esc(x)}</li>" for x in ex.get("reasoning", [])) + "</ul>")
+        parts.append("</div>")
+    parts.append(f"<p><small>DoNotMix {esc(str(r.get('donotmix_version')))} &middot; run {esc(r.get('run_id', ''))}</small></p></main></body></html>")
+    return "".join(parts)
+
+
+def dumps(obj) -> str:
+    return json.dumps(obj, indent=1, default=str)

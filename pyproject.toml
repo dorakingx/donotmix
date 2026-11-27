@@ -1,0 +1,44 @@
+[project]
+name = "donotmix"
+version = "0.1.0"
+description = "Safe alone. Dangerous together. Combinatorial testing for feature flags, built on Flagsmith."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+authors = [{ name = "DoNotMix contributors" }]
+keywords = ["feature-flags", "flagsmith", "combinatorial-testing", "covering-arrays", "delta-debugging"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Testing",
+  "Programming Language :: Python :: 3",
+]
+dependencies = [
+  "typer>=0.12",
+  "pydantic>=2.6",
+  "pyyaml>=6.0",
+  "fastapi>=0.110",
+  "uvicorn>=0.29",
+]
+
+[project.optional-dependencies]
+demo = ["flagsmith>=5.0"]
+ai = ["anthropic>=0.40"]
+dev = ["pytest>=8", "pytest-timeout>=2.3", "httpx>=0.27", "flagsmith>=5.0"]
+
+[project.scripts]
+donotmix = "donotmix.cli:main"
+
+[build-system]
+requires = ["hatchling>=1.24"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/donotmix"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+  "integration: needs a running Flagsmith instance and the flagsmith CLI (set DONOTMIX_IT=1)",
+]
+addopts = "-q"

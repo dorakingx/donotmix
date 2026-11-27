@@ -1,0 +1,41 @@
+# DoNotMix configuration for the bundled MixMart demo (self-hosted Flagsmith via deploy/flagsmith).
+project: MixMart
+environment: Staging
+api_url: http://localhost:8000
+protected_environments: [Production]
+
+constraints:
+  - id: express-needs-new-checkout
+    requires: [express_shipping, new_checkout]
+    reason: express shipping is only implemented in the new checkout flow
+  - id: new-payment-needs-new-checkout
+    requires: [new_payment, new_checkout]
+    reason: the new payment gateway is only wired into the new checkout
+  - id: no-express-for-guests
+    excludes: [express_shipping, guest_checkout]
+    reason: express shipping needs a customer account
+
+personas:
+  - id: shopper
+    identifier: shopper-1
+    traits: {beta: false}
+  - id: beta_tester
+    identifier: beta-1
+    traits: {beta: true}
+
+runner:
+  type: command
+  command: "python -m pytest demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider -p no:randomly --junitxml={junit}"
+  jobs: 8
+  timeout: 120
+
+analysis:
+  paths: [demo/mixmart/mixmart]
+
+strategy:
+  name: risk
+  strength: 3
+  seed: 0
+
+ai:
+  provider: rule
