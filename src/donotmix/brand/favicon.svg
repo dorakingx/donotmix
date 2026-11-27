@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <title>DoNotMix</title>
+  <polygon points="16,1.6 30.4,16 16,30.4 1.6,16" fill="#FFD400" stroke="#111111" stroke-width="2.8" stroke-linejoin="miter"/>
+  <path fill="#111111" transform="translate(13.1 19.2) rotate(10)" d="M-1.25,-5.4H1.25V-1.6L3.2,2.2Q3.6,3.3 2.4,3.3H-2.4Q-3.6,3.3 -3.2,2.2L-1.25,-1.6Z"/>
+  <path fill="#111111" transform="translate(18.9 19.2) rotate(-10)" d="M-1.25,-5.4H1.25V-1.6L3.2,2.2Q3.6,3.3 2.4,3.3H-2.4Q-3.6,3.3 -3.2,2.2L-1.25,-1.6Z"/>
+  <polygon fill="#FF6B00" stroke="#111111" stroke-width="0.9" stroke-linejoin="miter" points="16.00,5.20 17.15,8.21 20.33,7.70 18.30,10.20 20.33,12.70 17.15,12.19 16.00,15.20 14.85,12.19 11.67,12.70 13.70,10.20 11.67,7.70 14.85,8.21"/>
+</svg>

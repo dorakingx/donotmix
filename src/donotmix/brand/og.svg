@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630" role="img" aria-labelledby="dnm-og-title dnm-og-desc">
+  <title id="dnm-og-title">DoNotMix: Safe alone. Dangerous together.</title>
+  <desc id="dnm-og-desc">Find the combinations that break your app before your users do.</desc>
+  <defs>
+    <pattern id="stripes" width="40" height="40" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="40" height="40" fill="#FFD400"/>
+      <rect width="20" height="40" fill="#111111"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="#111111"/>
+  <rect width="1200" height="26" fill="url(#stripes)"/>
+  <rect y="604" width="1200" height="26" fill="url(#stripes)"/>
+  <!-- lockup -->
+  <g transform="translate(80 78) scale(1.5)">
+    <polygon points="32,-0.6 64.6,32 32,64.6 -0.6,32" fill="#FFD400"/>
+    <polygon points="32,3 61,32 32,61 3,32" fill="#FFD400" stroke="#111111" stroke-width="4.5" stroke-linejoin="miter"/>
+    <path fill="#111111" transform="translate(25 39.5) rotate(10) scale(0.78)" d="M-4,-16H4V-12.5H2.6V-5L8,5Q9,8 6,8H-6Q-9,8 -8,5L-2.6,-5V-12.5H-4Z"/>
+    <path fill="#111111" transform="translate(39 39.5) rotate(-10) scale(0.78)" d="M-4,-16H4V-12.5H2.6V-5L8,5Q9,8 6,8H-6Q-9,8 -8,5L-2.6,-5V-12.5H-4Z"/>
+    <polygon fill="#FF6B00" stroke="#111111" stroke-width="1.6" stroke-linejoin="miter" points="32.00,9.00 33.53,13.80 38.01,11.49 35.70,15.97 40.50,17.50 35.70,19.03 38.01,23.51 33.53,21.20 32.00,26.00 30.47,21.20 25.99,23.51 28.30,19.03 23.50,17.50 28.30,15.97 25.99,11.49 30.47,13.80"/>
+  </g>
+  <g transform="translate(200 99) scale(1.1)">
+    <path fill="#F5F1E6" fill-rule="evenodd" d="M0 0H26Q40 0 40 14V46Q40 60 26 60H0ZM12 12V48H24Q28 48 28 44V16Q28 12 24 12Z M57 16H71Q81 16 81 26V50Q81 60 71 60H57Q47 60 47 50V26Q47 16 57 16ZM59 28V48H69V28Z M88 60V0H101L118 34V0H130V60H117L100 26V60Z M147 16H161Q171 16 171 26V50Q171 60 161 60H147Q137 60 137 50V26Q137 16 147 16ZM149 28V48H159V28Z M186 4H198V16H208V28H198V48H208V60H186V28H178V16H186Z M215 60V0H228L242 30L256 0H269V60H257V26L246 50H238L227 26V60Z M276 16H288V60H276Z M295 16H309L315 28L321 16H335L323 38L335 60H321L315 48L309 60H295L307 38Z"/>
+    <path fill="#FF6B00" d="M282 -2.5L289.5 5L282 12.5L274.5 5Z"/>
+  </g>
+  <text x="82" y="232" fill="#FFD400" font-family="ui-monospace, Menlo, Consolas, 'DejaVu Sans Mono', monospace" font-size="20" font-weight="700" letter-spacing="3">FEATURE-FLAG HAZARD TESTING FOR FLAGSMITH</text>
+  <!-- tagline -->
+  <g font-family="'Helvetica Neue', 'Arial Narrow', Arial, 'Liberation Sans', sans-serif" font-weight="800">
+    <text x="76" y="352" fill="#F5F1E6" font-size="92" letter-spacing="-2">Safe alone.</text>
+    <text x="76" y="450" fill="#FFD400" font-size="92" letter-spacing="-2" textLength="760" lengthAdjust="spacingAndGlyphs">Dangerous together.</text>
+  </g>
+  <rect x="80" y="486" width="64" height="6" fill="#FF6B00"/>
+  <text x="80" y="546" fill="#F5F1E6" font-family="'Helvetica Neue', Arial, 'Liberation Sans', sans-serif" font-size="31" font-weight="400">Find the combinations that break your app before your users do.</text>
+  <!-- right: placard -->
+  <g transform="translate(1012 262)">
+    <polygon points="0,-178 178,0 0,178 -178,0" fill="none" stroke="#FFD400" stroke-width="3" stroke-dasharray="12 9"/>
+  </g>
+  <g transform="translate(882 132) scale(4.06)">
+    <polygon points="32,-0.6 64.6,32 32,64.6 -0.6,32" fill="#FFD400"/>
+    <polygon points="32,3 61,32 32,61 3,32" fill="#FFD400" stroke="#111111" stroke-width="4.5" stroke-linejoin="miter"/>
+    <path fill="#111111" transform="translate(25 39.5) rotate(10) scale(0.78)" d="M-4,-16H4V-12.5H2.6V-5L8,5Q9,8 6,8H-6Q-9,8 -8,5L-2.6,-5V-12.5H-4Z"/>
+    <path fill="#111111" transform="translate(39 39.5) rotate(-10) scale(0.78)" d="M-4,-16H4V-12.5H2.6V-5L8,5Q9,8 6,8H-6Q-9,8 -8,5L-2.6,-5V-12.5H-4Z"/>
+    <polygon fill="#FF6B00" stroke="#111111" stroke-width="1.6" stroke-linejoin="miter" points="32.00,9.00 33.53,13.80 38.01,11.49 35.70,15.97 40.50,17.50 35.70,19.03 38.01,23.51 33.53,21.20 32.00,26.00 30.47,21.20 25.99,23.51 28.30,19.03 23.50,17.50 28.30,15.97 25.99,11.49 30.47,13.80"/>
+  </g>
+</svg>

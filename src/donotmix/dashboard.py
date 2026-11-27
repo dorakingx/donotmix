@@ -18,7 +18,9 @@ from fastapi.staticfiles import StaticFiles
 from .approval import AuditLog, ApprovalError, approval_record, approve_from_dashboard, apply as do_apply, load_proposal, proposals_dir
 from .config import ProjectConfig
 from .engine import ScanOptions, latest_run, scan
-from .flagsmith import FlagsmithCLI
+import os
+
+from .flagsmith import FlagsmithCLI, FlagsmithError
 from .report import brief
 
 STATIC = Path(__file__).parent / "dashboard_static"
@@ -34,7 +36,9 @@ def create_app(cfg: ProjectConfig) -> FastAPI:
     def _local(request: Request) -> None:
         origin = request.headers.get("origin") or request.headers.get("referer") or ""
         host = request.client.host if request.client else ""
-        if host not in ("127.0.0.1", "::1", "localhost", "testclient"):
+        # inside Docker the browser reaches us through a port mapping (client = bridge gateway);
+        # DONOTMIX_DASHBOARD_ALLOW_REMOTE relaxes only the client-address check, never CSRF/Origin/typed confirmation
+        if host not in ("127.0.0.1", "::1", "localhost", "testclient") and not os.environ.get("DONOTMIX_DASHBOARD_ALLOW_REMOTE"):
             raise HTTPException(403, "dashboard actions are only accepted from localhost")
         if origin and not any(origin.startswith(p) for p in ("http://127.0.0.1", "http://localhost", "http://[::1]", "http://testserver")):
             raise HTTPException(403, "cross-origin request refused")
@@ -120,6 +124,8 @@ def create_app(cfg: ProjectConfig) -> FastAPI:
             res = do_apply(root, pid, cfg.protected_environments, cli, dry_run=bool(body.get("dry_run")))
         except ApprovalError as ex:
             raise HTTPException(400, str(ex))
+        except FlagsmithError as ex:
+            raise HTTPException(502, f"Flagsmith: {ex}")
         return res
 
     @app.post("/api/scan")

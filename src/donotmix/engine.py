@@ -411,16 +411,22 @@ def scan(cfg: ProjectConfig, opts: ScanOptions) -> dict:
         doc = apply_config_to_document(snap["document"], h["repro_config"])
         p = repro_dir / f"{h['id']}.environment.json"
         p.write_text(json.dumps(doc, indent=1))
-        persona = next((pp for pp in personas if pp.id == h["personas"][0]), personas[0])
+        # reproduce with the persona whose Flagsmith evaluation deviates least from the tested state;
+        # overrides are reported only for persona-specific hazards (where they can be causal)
+        cands = [pp for pp in personas if pp.id in h["personas"]] or personas[:1]
+        evals = [(pp, effective_flags(p, pp)) for pp in cands]
+        def _n_over(ev):
+            return sum(1 for k, v in (ev or {}).items() if k in h["repro_config"] and v != h["repro_config"][k])
+        persona, eff = min(evals, key=lambda x: _n_over(x[1]))
+        h["effective_flags"] = eff
+        persona_specific = len(set(h["personas"])) < len(personas)
+        h["overrides_applied"] = {k: v for k, v in (eff or {}).items() if k in h["repro_config"] and v != h["repro_config"][k]} if persona_specific else {}
         envs = [f"DONOTMIX_ENV_DOCUMENT={_rel(p, root)}"]
         if persona.identifier:
             envs.append(f"DONOTMIX_IDENTITY={persona.identifier}")
         if persona.traits:
             envs.append(f"DONOTMIX_TRAITS='{json.dumps(dict(persona.traits))}'")
         cmd = cfg.runner.command.replace(" --junitxml={junit}", "").replace("{junit}", "/dev/null") if cfg.runner.type == "command" else f"python -c 'import {cfg.runner.target}'"
-        h["effective_flags"] = effective_flags(p, persona)
-        if h["effective_flags"]:
-            h["overrides_applied"] = {k: v for k, v in h["effective_flags"].items() if k in h["repro_config"] and v != h["repro_config"][k]}
         h["repro"] = {"document": _rel(p, root), "persona": persona.id, "command": " ".join(envs) + " " + cmd,
                       "donotmix": f"donotmix reproduce {h['id']} --run {run_id}"}
 

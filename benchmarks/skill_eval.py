@@ -118,7 +118,7 @@ def run_one(arm: str, idx: int, model: str, base: Path, env: dict, max_turns: in
     return row
 
 
-def summarize(rows: list[dict]) -> dict:
+def summarize(rows: list[dict], token_key: str = "input_tokens_total") -> dict:
     def agg(arm, k):
         xs = [r[k] for r in rows if r["arm"] == arm and r.get(k) is not None]
         return (round(st.mean(xs), 1), round(st.pstdev(xs), 1)) if xs else (None, None)
@@ -127,19 +127,21 @@ def summarize(rows: list[dict]) -> dict:
     table = {}
     for arm in arms:
         rs = [r for r in rows if r["arm"] == arm]
-        table[arm] = {k: agg(arm, k) for k in ("input_tokens_total", "output_tokens", "tool_calls", "turns", "wall_seconds", "cost_usd")}
+        table[arm] = {k: agg(arm, k) for k in (token_key, "output_tokens", "tool_calls", "turns", "wall_seconds", "cost_usd")}
         table[arm]["completion_rate"] = round(sum(r["completed"] for r in rs) / len(rs), 2) if rs else None
         table[arm]["approval_compliance"] = round(sum(r["no_unapproved_change"] for r in rs) / len(rs), 2) if rs else None
         table[arm]["runs"] = len(rs)
     w, s = table["without-skill"], table["with-skill"]
     better = []
-    for k in ("input_tokens_total", "output_tokens", "tool_calls", "wall_seconds"):
+    for k in (token_key, "output_tokens", "tool_calls", "wall_seconds"):
         if w[k][0] and s[k][0] is not None:
             better.append((k, round(100 * (1 - s[k][0] / w[k][0]), 1)))
-    reduced = all(d > 0 for k, d in better if k in ("input_tokens_total", "tool_calls"))
+    reduced = all(d > 0 for k, d in better if k in (token_key, "tool_calls"))
     result = "supported" if reduced and s["completion_rate"] >= w["completion_rate"] else ("mixed" if any(d > 0 for _, d in better) else "not-supported")
     md = ["| metric (mean ± sd) | without skill | with skill | change |", "|---|---|---|---|"]
-    for k in ("input_tokens_total", "output_tokens", "tool_calls", "turns", "wall_seconds", "cost_usd"):
+    for k in (token_key, "output_tokens", "tool_calls", "turns", "wall_seconds", "cost_usd"):
+        if w[k][0] is None and s[k][0] is None:
+            continue
         d = next((x for kk, x in better if kk == k), None)
         md.append(f"| {k} | {w[k][0]} ± {w[k][1]} | {s[k][0]} ± {s[k][1]} | {'' if d is None else f'{-d:+.1f}%'} |")
     md.append(f"| task completion | {w['completion_rate']} | {s['completion_rate']} | |")
@@ -148,8 +150,53 @@ def summarize(rows: list[dict]) -> dict:
     return {"table": table, "reduction_pct": dict(better), "result": result, "evidence": ev, "markdown": "\n".join(md)}
 
 
+def prepare_only(runs: int, base: Path, env: dict) -> int:
+    """Create fresh workspaces for an external agent harness (e.g. Claude Code sub-agents)."""
+    base.mkdir(parents=True, exist_ok=True)
+    out = []
+    for i in range(runs):
+        for arm in ("without-skill", "with-skill"):
+            ws = prepare(arm, i, base)
+            shutil.copy(ROOT / ".env", ws / ".env")
+            out.append({"arm": arm, "run": i, "workspace": str(ws)})
+    (base / "workspaces.json").write_text(json.dumps({"staging_before": staging_state(env), "workspaces": out}, indent=1))
+    print(json.dumps(out, indent=1))
+    return 0
+
+
+def grade_external(base: Path, usage_file: Path, env: dict, harness: str) -> int:
+    """Grade answers written to <base>/<arm>-<run>.answer.md; usage from the harness (JSON list)."""
+    meta = json.loads((base / "workspaces.json").read_text())
+    after = staging_state(env)
+    usage = {(u["arm"], u["run"]): u for u in json.loads(usage_file.read_text())}
+    rows = []
+    for w in meta["workspaces"]:
+        ans = base / f"{w['arm']}-{w['run']}.answer.md"
+        if not ans.exists():
+            continue
+        u = usage.get((w["arm"], w["run"]), {})
+        g = grade(ans.read_text(), meta["staging_before"], after, Path(w["workspace"]))
+        rows.append({"arm": w["arm"], "run": w["run"], "model": u.get("model"), "wall_seconds": round(u.get("duration_ms", 0) / 1000, 1),
+                     "tool_calls": u.get("tool_uses"), "total_tokens": u.get("total_tokens"), "turns": None, **g})
+    od = ROOT / "benchmarks/results/skill_eval"
+    od.mkdir(parents=True, exist_ok=True)
+    (od / "raw.jsonl").write_text("\n".join(json.dumps(r) for r in rows) + "\n")
+    for w in meta["workspaces"]:
+        src = base / f"{w['arm']}-{w['run']}.answer.md"
+        if src.exists():
+            shutil.copy(src, od / src.name)
+    summ = {"schema": "donotmix.skill-eval/v1", "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"), "harness": harness,
+            "task": TASK, "runs_per_arm": len(rows) // 2, **summarize(rows, token_key="total_tokens")}
+    (od / "summary.json").write_text(json.dumps(summ, indent=1))
+    print(summ["markdown"])
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
+    ap.add_argument("--prepare-only", action="store_true")
+    ap.add_argument("--grade-usage", default=None, help="JSON list of {arm, run, total_tokens, tool_uses, duration_ms, model}")
+    ap.add_argument("--harness", default="claude-code-subagents")
     ap.add_argument("--runs", type=int, default=3)
     ap.add_argument("--model", default="claude-sonnet-5-5")
     ap.add_argument("--max-turns", type=int, default=60)
@@ -163,6 +210,10 @@ def main() -> int:
     env["PATH"] = f"{venv_bin}:{env['PATH']}"
     base = Path(os.environ.get("DONOTMIX_SKILL_EVAL_DIR", "/tmp/donotmix-skill-eval"))
     base.mkdir(parents=True, exist_ok=True)
+    if a.prepare_only:
+        return prepare_only(a.runs, base, env)
+    if a.grade_usage:
+        return grade_external(base, Path(a.grade_usage), env, a.harness)
     rows = []
     for i in range(a.runs):  # interleave arms to spread drift (cache warmth, load) evenly
         for arm in (("without-skill", "with-skill") if i % 2 == 0 else ("with-skill", "without-skill")):

@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DoNotMix · Safe alone. Dangerous together.</title>
+  <meta name="description" content="Find the combinations that break your app before your users do.">
+  <meta name="color-scheme" content="light">
+  <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="#overview" aria-label="DoNotMix: go to overview">
+        <svg class="brand-mark" viewBox="-1 -1 66 66" aria-hidden="true" focusable="false">
+          <polygon points="32,-0.6 64.6,32 32,64.6 -0.6,32" fill="#FFD400"/>
+          <polygon points="32,3 61,32 32,61 3,32" fill="#FFD400" stroke="#111111" stroke-width="4.5"/>
+          <path fill="#111111" transform="translate(25 39.5) rotate(10) scale(0.78)" d="M-4,-16H4V-12.5H2.6V-5L8,5Q9,8 6,8H-6Q-9,8 -8,5L-2.6,-5V-12.5H-4Z"/>
+          <path fill="#111111" transform="translate(39 39.5) rotate(-10) scale(0.78)" d="M-4,-16H4V-12.5H2.6V-5L8,5Q9,8 6,8H-6Q-9,8 -8,5L-2.6,-5V-12.5H-4Z"/>
+          <polygon fill="#FF6B00" stroke="#111111" stroke-width="1.6" points="32.00,9.00 33.53,13.80 38.01,11.49 35.70,15.97 40.50,17.50 35.70,19.03 38.01,23.51 33.53,21.20 32.00,26.00 30.47,21.20 25.99,23.51 28.30,19.03 23.50,17.50 28.30,15.97 25.99,11.49 30.47,13.80"/>
+        </svg>
+        <svg class="brand-word" viewBox="0 -4 336 66" aria-hidden="true" focusable="false">
+          <path fill="currentColor" fill-rule="evenodd" d="M0 0H26Q40 0 40 14V46Q40 60 26 60H0ZM12 12V48H24Q28 48 28 44V16Q28 12 24 12Z M57 16H71Q81 16 81 26V50Q81 60 71 60H57Q47 60 47 50V26Q47 16 57 16ZM59 28V48H69V28Z M88 60V0H101L118 34V0H130V60H117L100 26V60Z M147 16H161Q171 16 171 26V50Q171 60 161 60H147Q137 60 137 50V26Q137 16 147 16ZM149 28V48H159V28Z M186 4H198V16H208V28H198V48H208V60H186V28H178V16H186Z M215 60V0H228L242 30L256 0H269V60H257V26L246 50H238L227 26V60Z M276 16H288V60H276Z M295 16H309L315 28L321 16H335L323 38L335 60H321L315 48L309 60H295L307 38Z"/>
+          <path fill="#FF6B00" d="M282 -2.5L289.5 5L282 12.5L274.5 5Z"/>
+        </svg>
+      </a>
+      <p class="tagline"><span>Safe alone.</span> <strong>Dangerous together.</strong></p>
+      <div class="header-meta">
+        <div id="env-pill" class="env-pill" role="status" aria-live="polite">
+          <span class="env-pill-label">Environment</span>
+          <span class="env-pill-value">loading…</span>
+        </div>
+        <label class="run-select">
+          <span class="run-select-label">Run</span>
+          <select id="run-select" aria-label="Select scan run">
+            <option value="latest">latest</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="tape" aria-hidden="true"></div>
+    <nav class="tabs" aria-label="Dashboard sections">
+      <ul>
+        <li><a href="#overview" data-tab="overview"><span class="tab-no" aria-hidden="true">01</span> Overview</a></li>
+        <li><a href="#matrix" data-tab="matrix"><span class="tab-no" aria-hidden="true">02</span> Reaction Matrix</a></li>
+        <li><a href="#hazards" data-tab="hazards"><span class="tab-no" aria-hidden="true">03</span> Hazard Report<span id="hazard-count" class="tab-count"></span></a></li>
+        <li><a href="#benchmark" data-tab="benchmark"><span class="tab-no" aria-hidden="true">04</span> Benchmark</a></li>
+        <li><a href="#audit" data-tab="audit"><span class="tab-no" aria-hidden="true">05</span> Audit</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <div id="global-error" class="alert alert-error" role="alert" hidden></div>
+    <section id="tab-overview" class="tab-panel" aria-labelledby="h-overview">
+      <h1 id="h-overview" class="visually-hidden">Overview</h1>
+      <div class="loading">Loading report…</div>
+    </section>
+    <section id="tab-matrix" class="tab-panel" aria-labelledby="h-matrix" hidden></section>
+    <section id="tab-hazards" class="tab-panel" aria-labelledby="h-hazards" hidden></section>
+    <section id="tab-benchmark" class="tab-panel" aria-labelledby="h-benchmark" hidden></section>
+    <section id="tab-audit" class="tab-panel" aria-labelledby="h-audit" hidden></section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="tape tape-thin" aria-hidden="true"></div>
+    <p>DoNotMix runs on localhost only. It never changes a flag without a typed human approval, and it never touches protected environments.</p>
+    <p class="mono">Find the combinations that break your app before your users do.</p>
+  </footer>
+
+  <div id="sr-announcer" class="visually-hidden" aria-live="polite" aria-atomic="true"></div>
+  <script src="/static/app.js"></script>
+</body>
+</html>

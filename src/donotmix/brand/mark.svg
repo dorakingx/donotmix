@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="256" height="256" role="img" aria-labelledby="dnm-mark-title">
+  <title id="dnm-mark-title">DoNotMix: two flasks reacting inside a hazard diamond</title>
+  <!-- hazard diamond -->
+  <polygon points="32,3 61,32 32,61 3,32" fill="#FFD400" stroke="#111111" stroke-width="4.5" stroke-linejoin="miter"/>
+  <!-- two flasks leaning together; their contents meet at the bottom -->
+  <path fill="#111111" transform="translate(25 39.5) rotate(10) scale(0.78)" d="M-4,-16H4V-12.5H2.6V-5L8,5Q9,8 6,8H-6Q-9,8 -8,5L-2.6,-5V-12.5H-4Z"/>
+  <path fill="#111111" transform="translate(39 39.5) rotate(-10) scale(0.78)" d="M-4,-16H4V-12.5H2.6V-5L8,5Q9,8 6,8H-6Q-9,8 -8,5L-2.6,-5V-12.5H-4Z"/>
+  <!-- reaction burst -->
+  <polygon fill="#FF6B00" stroke="#111111" stroke-width="1.6" stroke-linejoin="miter" points="32.00,9.00 33.53,13.80 38.01,11.49 35.70,15.97 40.50,17.50 35.70,19.03 38.01,23.51 33.53,21.20 32.00,26.00 30.47,21.20 25.99,23.51 28.30,19.03 23.50,17.50 28.30,15.97 25.99,11.49 30.47,13.80"/>
+</svg>
