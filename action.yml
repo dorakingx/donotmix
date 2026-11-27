@@ -1,0 +1,25 @@
+name: DoNotMix flag-combination gate
+description: Snapshot a Flagsmith environment, run your tests over risky flag combinations, fail on hazards.
+branding: {icon: alert-triangle, color: yellow}
+inputs:
+  environment: {description: Flagsmith environment to check (never written to), required: true}
+  strategy: {description: "exhaustive | random | pairwise | tway | risk", default: risk}
+  strength: {description: interaction strength t, default: "3"}
+  budget: {description: max configurations (empty = until full coverage), default: ""}
+  fail-on: {description: "live (exit 11 only) or any (10 or 11)", default: any}
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        pip install "donotmix @ git+https://github.com/dorakingx/donotmix" >/dev/null
+        command -v flagsmith >/dev/null || { curl -fsSL https://get.flagsmith.com | sh; echo "$HOME/.local/bin" >> "$GITHUB_PATH"; }
+    - shell: bash
+      run: |
+        set +e
+        export PATH="$HOME/.local/bin:$PATH"
+        donotmix scan -e "${{ inputs.environment }}" -s "${{ inputs.strategy }}" -t "${{ inputs.strength }}" ${{ inputs.budget && format('-b {0}', inputs.budget) || '' }} --brief | tee donotmix-brief.json
+        code=${PIPESTATUS[0]}
+        if [ "$code" -eq 11 ]; then exit 11; fi
+        if [ "$code" -eq 10 ]; then if [ "${{ inputs.fail-on }}" = any ]; then exit 10; fi; exit 0; fi
+        exit "$code"

@@ -1,0 +1,52 @@
+name: ci
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv venv --python ${{ matrix.python }} && uv pip install -e ".[dev]"
+      - name: unit tests (no credentials needed)
+        run: uv run pytest
+      - name: validate Agent Skill (agentskills.io reference validator)
+        run: uvx --from 'git+https://github.com/agentskills/agentskills#subdirectory=skills-ref' skills-ref validate skills/donotmix
+      - name: offline sample scan must find the live hazard (exit 11)
+        run: |
+          set +e
+          uv run donotmix scan --snapshot examples/mixmart-staging.snapshot.json --brief > brief.json
+          code=$?
+          cat brief.json
+          test "$code" -eq 11
+
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv venv --python 3.12 && uv pip install -e ".[dev]"
+      - name: install official Flagsmith CLI
+        run: |
+          curl -fsSL https://get.flagsmith.com | sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+      - name: start self-hosted Flagsmith
+        run: docker compose -f deploy/flagsmith/docker-compose.yml up -d
+      - name: bootstrap + seed MixMart through the CLI
+        run: uv run python scripts/bootstrap_flagsmith.py --api-url http://localhost:8000 --env-file .env
+      - name: live integration tests
+        run: |
+          set -a; . ./.env; set +a
+          DONOTMIX_IT=1 uv run pytest tests/integration -m integration
+      - name: live scan of Staging (expects the planted live hazard, exit 11)
+        run: |
+          set -a; . ./.env; set +a
+          set +e
+          uv run donotmix scan -e Staging --brief; code=$?
+          test "$code" -eq 11

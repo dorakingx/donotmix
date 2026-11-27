@@ -1,0 +1,9 @@
+.git
+.venv
+.env
+.env.*
+.donotmix
+**/__pycache__
+benchmarks/results/mixmart/exec
+benchmarks/results/mixmart/runs
+*.egg-info
