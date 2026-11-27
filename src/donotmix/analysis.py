@@ -286,16 +286,20 @@ def analyze(paths: list[str | Path], flags: list[str], incidents: list[dict] | N
 class RiskModel:
     """Turns an Analysis into tuple weights for the greedy cover.
 
-    weight(tuple) = 1 + alpha * set_score(flags of tuple) * value_factor
-    value_factor rewards literals that move away from the baseline (changes are where
-    interactions get exercised) but never zeroes out baseline-valued literals.
+    weight(tuple) = (1 + code * set_score(flags) * flag_factor) * change_factor
+
+    code factor    hyperedge evidence from static analysis (shared scope / calls / writes / incidents)
+    change factor  literals that move away from the live baseline weigh more (interactions are
+                   exercised by *changes*); never zero, so baseline-valued tuples stay covered.
+    Both priors can be switched off for ablation (use_code / use_change).
     """
 
-    def __init__(self, analysis: Analysis, names: list[str], baseline: tuple, alpha: float = 1.0):
+    def __init__(self, analysis: Analysis, names: list[str], baseline: tuple, alpha: float = 1.0, use_code: bool = True, use_change: bool = True):
         self.a = analysis
         self.names = names
         self.baseline = baseline
-        self.alpha = alpha
+        self.alpha = alpha if use_code else 0.0
+        self.use_change = use_change
         self._cache: dict = {}
 
     def set_risk(self, idxs) -> float:
@@ -307,10 +311,15 @@ class RiskModel:
     def tuple_weight(self, tp) -> float:
         idxs = [i for i, _ in tp]
         changed = sum(1 for i, v in tp if v != self.baseline[i])
-        value_factor = 1.0 + 0.5 * changed / len(tp)
-        flag_factor = sum(self.a.flag_score(self.names[i]) for i in idxs) / len(idxs)
-        return 1.0 + self.alpha * self.set_risk(idxs) * value_factor * flag_factor
+        change_factor = 1.0 + 0.5 * changed / len(tp) if self.use_change else 1.0
+        code = 0.0
+        if self.alpha:
+            flag_factor = sum(self.a.flag_score(self.names[i]) for i in idxs) / len(idxs)
+            code = self.alpha * self.set_risk(idxs) * flag_factor
+        return (1.0 + code) * change_factor
 
     def hyperedges_idx(self) -> list[tuple[list[int], float]]:
+        if not self.alpha:
+            return []
         idx = {n: i for i, n in enumerate(self.names)}
         return [([idx[f] for f in fs if f in idx], w) for fs, w, _ in self.a.hyperedges(min_size=2)]
