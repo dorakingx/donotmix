@@ -10,3 +10,7 @@ dist/
 build/
 *.egg-info/
 .DS_Store
+benchmarks/results/mixmart/exec/
+benchmarks/results/mixmart/runs/*/exec/
+benchmarks/results/mixmart/runs/*/remediate/
+benchmarks/results/mixmart/runs/*/reproduce/

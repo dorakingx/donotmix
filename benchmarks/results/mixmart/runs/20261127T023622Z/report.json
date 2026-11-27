@@ -1,0 +1,3791 @@
+{
+ "schema": "donotmix.report/v1",
+ "run_id": "20261127T023622Z",
+ "created_at": "2026-11-27T02:36:25+00:00",
+ "donotmix_version": "0.1.0",
+ "git_commit": "bbc5147",
+ "mode": {
+  "flagsmith": "live",
+  "ai": "rule-based",
+  "dry_run": false
+ },
+ "environment": {
+  "source": "flagsmith-cli",
+  "cli_version": "unknown",
+  "api_url": "http://localhost:8000",
+  "project": "MixMart",
+  "environment": {
+   "name": "Staging",
+   "key": "gLwVaeNhazK3e4JjNGUzEF",
+   "id": 2
+  },
+  "fetched_at": "2026-11-27T02:36:24+00:00",
+  "state_hash": "08015f56129a5db1"
+ },
+ "flags": [
+  {
+   "name": "new_checkout",
+   "live": true,
+   "segment_scoped": [],
+   "degree": 9,
+   "recency": 0.2
+  },
+  {
+   "name": "dynamic_pricing",
+   "live": true,
+   "segment_scoped": [],
+   "degree": 9,
+   "recency": 0.2
+  },
+  {
+   "name": "discount_engine",
+   "live": true,
+   "segment_scoped": [],
+   "degree": 9,
+   "recency": 0.2
+  },
+  {
+   "name": "guest_checkout",
+   "live": false,
+   "segment_scoped": [],
+   "degree": 9,
+   "recency": 0.2
+  },
+  {
+   "name": "express_shipping",
+   "live": false,
+   "segment_scoped": [],
+   "degree": 9,
+   "recency": 0.2
+  },
+  {
+   "name": "loyalty_program",
+   "live": true,
+   "segment_scoped": [],
+   "degree": 9,
+   "recency": 0.2
+  },
+  {
+   "name": "new_payment",
+   "live": false,
+   "segment_scoped": [],
+   "degree": 9,
+   "recency": 0.2
+  },
+  {
+   "name": "recommendation",
+   "live": true,
+   "segment_scoped": [],
+   "degree": 9,
+   "recency": 0.2
+  },
+  {
+   "name": "ai_search",
+   "live": false,
+   "segment_scoped": [
+    "beta_testers"
+   ],
+   "degree": 9,
+   "recency": 0.2
+  },
+  {
+   "name": "dark_mode",
+   "live": true,
+   "segment_scoped": [],
+   "degree": 9,
+   "recency": 0.2
+  }
+ ],
+ "constraints": {
+  "declared": [
+   {
+    "id": "express-needs-new-checkout",
+    "rule": "express_shipping -> (new_checkout)",
+    "reason": "express shipping is only implemented in the new checkout flow",
+    "source": "declared"
+   },
+   {
+    "id": "new-payment-needs-new-checkout",
+    "rule": "new_payment -> (new_checkout)",
+    "reason": "the new payment gateway is only wired into the new checkout",
+    "source": "declared"
+   },
+   {
+    "id": "no-express-for-guests",
+    "rule": "!(express_shipping & guest_checkout)",
+    "reason": "express shipping needs a customer account",
+    "source": "declared"
+   }
+  ],
+  "consistent": true,
+  "conflict": [],
+  "baseline_violations": [],
+  "feasible_configs": 512,
+  "total_configs": 1024,
+  "notes": []
+ },
+ "personas": [
+  {
+   "id": "shopper",
+   "identifier": "shopper-1",
+   "traits": {
+    "beta": false
+   }
+  },
+  {
+   "id": "beta_tester",
+   "identifier": "beta-1",
+   "traits": {
+    "beta": true
+   }
+  }
+ ],
+ "plan": {
+  "strategy": "risk",
+  "strength": 3,
+  "budget": null,
+  "seed": 0,
+  "configs": 25,
+  "notes": [
+   "risk-weighted variable-strength cover: 938 weighted tuples (24 from 1 high-order hyperedges), 24 tests"
+  ],
+  "includes_live_state": true
+ },
+ "analysis": {
+  "files_scanned": 12,
+  "hyperedges": [
+   {
+    "flags": [
+     "ai_search",
+     "dark_mode",
+     "express_shipping",
+     "loyalty_program",
+     "new_checkout"
+    ],
+    "weight": 3.5,
+    "evidence": [
+     {
+      "kind": "module",
+      "where": "demo/mixmart/mixmart/ui.py",
+      "detail": ""
+     },
+     {
+      "kind": "scope",
+      "where": "demo/mixmart/mixmart/ui.py:6",
+      "detail": "function theme"
+     }
+    ]
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "new_checkout"
+    ],
+    "weight": 3.5,
+    "evidence": [
+     {
+      "kind": "module",
+      "where": "demo/mixmart/mixmart/checkout.py",
+      "detail": ""
+     },
+     {
+      "kind": "scope",
+      "where": "demo/mixmart/mixmart/checkout.py:44",
+      "detail": "function checkout"
+     }
+    ]
+   },
+   {
+    "flags": [
+     "ai_search",
+     "recommendation"
+    ],
+    "weight": 2.0,
+    "evidence": [
+     {
+      "kind": "call",
+      "where": "also_bought",
+      "detail": "also_bought -> callees reading ['ai_search']"
+     }
+    ]
+   },
+   {
+    "flags": [
+     "ai_search",
+     "dark_mode",
+     "discount_engine",
+     "dynamic_pricing",
+     "express_shipping",
+     "guest_checkout",
+     "loyalty_program",
+     "new_checkout",
+     "new_payment",
+     "recommendation"
+    ],
+    "weight": 0.5,
+    "evidence": [
+     {
+      "kind": "module",
+      "where": "demo/mixmart/mixmart/flags.py",
+      "detail": ""
+     }
+    ]
+   }
+  ]
+ },
+ "coverage_planned": {
+  "2": {
+   "t": 2,
+   "covered": 177,
+   "total": 177,
+   "ratio": 1.0
+  },
+  "3": {
+   "t": 3,
+   "covered": 914,
+   "total": 914,
+   "ratio": 1.0
+  }
+ },
+ "ai": {
+  "provider": "rule",
+  "mode": "rule-based",
+  "llm_calls": 0,
+  "input_tokens": 0,
+  "output_tokens": 0,
+  "notes": [],
+  "label": "Deterministic rule-based analysis (no LLM used)."
+ },
+ "verdict": {
+  "status": "LIVE_HAZARD",
+  "exit_code": 11,
+  "summary": "The current Staging state fails (3 live hazard(s)); 4 latent hazard(s) more.",
+  "caveat": "Finite testing: a clean result means no failure was observed under the executed configurations, tests and personas. It is not a proof of safety."
+ },
+ "execution": {
+  "runner": "command",
+  "configs": 25,
+  "personas": 2,
+  "executions_plan": 50,
+  "executions_minimize": 464,
+  "executions_total": 514,
+  "cache_hits": 827,
+  "failed_executions": 40,
+  "runner_errors": 0,
+  "first_failure_config_index": 0,
+  "exec_seconds": 5.26,
+  "total_seconds": 73.79
+ },
+ "coverage": {
+  "2": {
+   "t": 2,
+   "covered": 177,
+   "total": 177,
+   "ratio": 1.0
+  },
+  "3": {
+   "t": 3,
+   "covered": 914,
+   "total": 914,
+   "ratio": 1.0
+  }
+ },
+ "hazards": [
+  {
+   "fingerprint": "26a878",
+   "status": "live",
+   "severity": "critical",
+   "failure_class": "silent-wrong-result",
+   "personas": [
+    "beta_tester",
+    "shopper"
+   ],
+   "atoms": [
+    {
+     "persona": "beta_tester",
+     "test": "demo.mixmart.tests.test_storefront::test_member_checkout_total",
+     "kind": "AssertionError",
+     "message": "AssertionError: discount 920 != 992"
+    },
+    {
+     "persona": "shopper",
+     "test": "demo.mixmart.tests.test_storefront::test_member_checkout_total",
+     "kind": "AssertionError",
+     "message": "AssertionError: discount 920 != 992"
+    }
+   ],
+   "core": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true
+   },
+   "order": 3,
+   "pinned": {},
+   "masked": [
+    "new_payment"
+   ],
+   "trigger": {
+    "new_checkout": true,
+    "discount_engine": true
+   },
+   "trigger_claim": "globally-minimal",
+   "reference": "nearest-passing-config",
+   "reference_diff": {
+    "new_checkout": false,
+    "discount_engine": false
+   },
+   "generality": {
+    "verdict": "sufficient",
+    "checked": 96,
+    "failed": 64,
+    "passed": 0,
+    "masked": 32,
+    "exhaustive": true,
+    "completion_space": 128,
+    "passing_examples": []
+   },
+   "repro_config": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": false,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": false,
+    "recommendation": true,
+    "ai_search": false,
+    "dark_mode": true
+   },
+   "repro_diff_from_live": {},
+   "minimization_tests": 106,
+   "signatures": [
+    "AssertionError: AssertionError: discount #"
+   ],
+   "id": "HZ-1",
+   "title": "new_checkout=on + dynamic_pricing=on + discount_engine=on -> test_member_checkout_total (AssertionError)",
+   "related": [],
+   "effective_flags": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": false,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": false,
+    "recommendation": true,
+    "ai_search": true,
+    "dark_mode": true
+   },
+   "overrides_applied": {
+    "ai_search": true
+   },
+   "repro": {
+    "document": "benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-1.environment.json",
+    "persona": "beta_tester",
+    "command": "DONOTMIX_ENV_DOCUMENT=benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-1.environment.json DONOTMIX_IDENTITY=beta-1 DONOTMIX_TRAITS='{\"beta\": true}' python -m pytest demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider -p no:randomly",
+    "donotmix": "donotmix reproduce HZ-1 --run 20261127T023622Z"
+   },
+   "code_refs": [
+    {
+     "flag": "new_checkout",
+     "file": "demo/mixmart/mixmart/checkout.py",
+     "line": 47,
+     "scope": "checkout",
+     "snippet": "  45 |     if customer is None and not features.on(\"guest_checkout\"):\n  46 |         raise CheckoutError(\"login required\")\n  47 |     if features.on(\"new_checkout\"):\n  48 |         return _new_checkout(cart, customer, features, shipping_choice)\n  49 |     return _legacy_checkout(cart, customer, features)\n  50 | "
+    },
+    {
+     "flag": "discount_engine",
+     "file": "demo/mixmart/mixmart/discounts.py",
+     "line": 11,
+     "scope": "discount_for",
+     "snippet": "   9 | def discount_for(priced_lines, features: Features) -> int:\n  10 |     \"\"\"priced_lines: iterable of (sku, qty, unit_price).\"\"\"\n  11 |     if not features.on(\"discount_engine\"):\n  12 |         return 0\n  13 |     subtotal = sum(q * u for _, q, u in priced_lines)\n  14 |     return subtotal * PERCENT // 100 if subtotal >= THRESHOLD else 0"
+    },
+    {
+     "flag": "dynamic_pricing",
+     "file": "demo/mixmart/mixmart/pricing.py",
+     "line": 10,
+     "scope": "unit_price",
+     "snippet": "   8 | \n   9 | def unit_price(product: Product, features: Features) -> int:\n  10 |     if features.on(\"dynamic_pricing\") and product.high_demand:\n  11 |         return product.list_price * (100 + SURGE_PERCENT) // 100\n  12 |     return product.list_price\n  13 | "
+    },
+    {
+     "flag": "ai_search",
+     "file": "demo/mixmart/mixmart/search.py",
+     "line": 9,
+     "scope": "search",
+     "snippet": "   7 | def search(query: str, features: Features) -> list[str]:\n   8 |     q = query.lower()\n   9 |     if features.on(\"ai_search\"):\n  10 |         # semantic index stores normalised ids\n  11 |         return [sku.lower() for sku, p in CATALOG.items() if q in p.name.lower() or any(q in t for t in p.tags)]\n  12 |     return [sku for sku, p in CATALOG.items() if q in p.name.lower() or q in p.tags]"
+    },
+    {
+     "flag": "new_checkout",
+     "file": "demo/mixmart/mixmart/ui.py",
+     "line": 11,
+     "scope": "theme",
+     "snippet": "   9 |         \"bg\": \"#111111\" if dark else \"#fafaf5\",\n  10 |         \"fg\": \"#f5f1e6\" if dark else \"#111111\",\n  11 |         \"badges\": [n for n in (\"new_checkout\", \"express_shipping\", \"loyalty_program\", \"ai_search\") if features.on(n)],\n  12 |     }"
+    }
+   ],
+   "dependency_evidence": [
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "discount_engine",
+      "dynamic_pricing",
+      "express_shipping",
+      "guest_checkout",
+      "loyalty_program",
+      "new_checkout",
+      "new_payment",
+      "recommendation"
+     ],
+     "where": "demo/mixmart/mixmart/flags.py",
+     "detail": ""
+    },
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "express_shipping",
+      "loyalty_program",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/ui.py",
+     "detail": ""
+    },
+    {
+     "kind": "scope",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "express_shipping",
+      "loyalty_program",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/ui.py:6",
+     "detail": "function theme"
+    }
+   ],
+   "predicted_by_analysis": true,
+   "explanation": {
+    "mode": "rule-based",
+    "verified": [
+     "Fails when new_checkout=on, dynamic_pricing=on, discount_engine=on hold together (persona: beta_tester, shopper).",
+     "Each of these 3 literal(s) is necessary: flipping any one of them makes the failing test pass.",
+     "Sufficient: the failure occurs in all 96 feasible completions of the other flags.",
+     "For persona beta_tester, Flagsmith evaluates ai_search=on despite the environment default (segment override: beta_testers)."
+    ],
+    "observed_error": "AssertionError: discount 920 != 992",
+    "reasoning": [
+     "Static analysis links these flags via module, scope edges, e.g. demo/mixmart/mixmart/flags.py (module); demo/mixmart/mixmart/ui.py (module).",
+     "No exception is raised: the system returns a wrong business result, which per-flag tests did not catch."
+    ],
+    "fix_suggestions": [
+     "Add a regression test pinned to this combination: `donotmix reproduce HZ-1 --run 20261127T023622Z`.",
+     "Until the code is fixed, keep the combination unreachable: either switch one of the core flags off in the affected environment (DoNotMix can propose and verify this) or declare a constraint `!(new_checkout & dynamic_pricing & discount_engine)` in donotmix.yaml.",
+     "Start at demo/mixmart/mixmart/checkout.py:47 (checkout): check every place where the code paths of new_checkout, dynamic_pricing, discount_engine read or write shared state."
+    ],
+    "label": "verified = backed by executed tests; reasoning = deterministic heuristics"
+   }
+  },
+  {
+   "fingerprint": "f24e45",
+   "status": "live",
+   "severity": "critical",
+   "failure_class": "silent-wrong-result",
+   "personas": [
+    "beta_tester",
+    "shopper"
+   ],
+   "atoms": [
+    {
+     "persona": "beta_tester",
+     "test": "demo.mixmart.tests.test_storefront::test_loyalty_points",
+     "kind": "AssertionError",
+     "message": "AssertionError: points 95 != 94"
+    },
+    {
+     "persona": "shopper",
+     "test": "demo.mixmart.tests.test_storefront::test_loyalty_points",
+     "kind": "AssertionError",
+     "message": "AssertionError: points 95 != 94"
+    }
+   ],
+   "core": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "loyalty_program": true
+   },
+   "order": 4,
+   "pinned": {},
+   "masked": [
+    "new_payment"
+   ],
+   "trigger": {
+    "new_checkout": true,
+    "discount_engine": true
+   },
+   "trigger_claim": "globally-minimal",
+   "reference": "nearest-passing-config",
+   "reference_diff": {
+    "new_checkout": false,
+    "discount_engine": false
+   },
+   "generality": {
+    "verdict": "sufficient",
+    "checked": 48,
+    "failed": 32,
+    "passed": 0,
+    "masked": 16,
+    "exhaustive": true,
+    "completion_space": 64,
+    "passing_examples": []
+   },
+   "repro_config": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": false,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": false,
+    "recommendation": true,
+    "ai_search": false,
+    "dark_mode": true
+   },
+   "repro_diff_from_live": {},
+   "minimization_tests": 0,
+   "signatures": [
+    "AssertionError: AssertionError: points #"
+   ],
+   "id": "HZ-2",
+   "title": "new_checkout=on + dynamic_pricing=on + discount_engine=on + loyalty_program=on -> test_loyalty_points (AssertionError)",
+   "related": [
+    {
+     "id": "HZ-1",
+     "relation": "extends"
+    }
+   ],
+   "effective_flags": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": false,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": false,
+    "recommendation": true,
+    "ai_search": true,
+    "dark_mode": true
+   },
+   "overrides_applied": {
+    "ai_search": true
+   },
+   "repro": {
+    "document": "benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-2.environment.json",
+    "persona": "beta_tester",
+    "command": "DONOTMIX_ENV_DOCUMENT=benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-2.environment.json DONOTMIX_IDENTITY=beta-1 DONOTMIX_TRAITS='{\"beta\": true}' python -m pytest demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider -p no:randomly",
+    "donotmix": "donotmix reproduce HZ-2 --run 20261127T023622Z"
+   },
+   "code_refs": [
+    {
+     "flag": "new_checkout",
+     "file": "demo/mixmart/mixmart/checkout.py",
+     "line": 47,
+     "scope": "checkout",
+     "snippet": "  45 |     if customer is None and not features.on(\"guest_checkout\"):\n  46 |         raise CheckoutError(\"login required\")\n  47 |     if features.on(\"new_checkout\"):\n  48 |         return _new_checkout(cart, customer, features, shipping_choice)\n  49 |     return _legacy_checkout(cart, customer, features)\n  50 | "
+    },
+    {
+     "flag": "discount_engine",
+     "file": "demo/mixmart/mixmart/discounts.py",
+     "line": 11,
+     "scope": "discount_for",
+     "snippet": "   9 | def discount_for(priced_lines, features: Features) -> int:\n  10 |     \"\"\"priced_lines: iterable of (sku, qty, unit_price).\"\"\"\n  11 |     if not features.on(\"discount_engine\"):\n  12 |         return 0\n  13 |     subtotal = sum(q * u for _, q, u in priced_lines)\n  14 |     return subtotal * PERCENT // 100 if subtotal >= THRESHOLD else 0"
+    },
+    {
+     "flag": "loyalty_program",
+     "file": "demo/mixmart/mixmart/loyalty.py",
+     "line": 7,
+     "scope": "award_points",
+     "snippet": "   5 | \n   6 | def award_points(customer, total: int, features: Features) -> int:\n   7 |     if not features.on(\"loyalty_program\"):\n   8 |         return 0\n   9 |     points = total // 100\n  10 |     customer.points += points  # customer is an account; see checkout for who can reach here"
+    },
+    {
+     "flag": "dynamic_pricing",
+     "file": "demo/mixmart/mixmart/pricing.py",
+     "line": 10,
+     "scope": "unit_price",
+     "snippet": "   8 | \n   9 | def unit_price(product: Product, features: Features) -> int:\n  10 |     if features.on(\"dynamic_pricing\") and product.high_demand:\n  11 |         return product.list_price * (100 + SURGE_PERCENT) // 100\n  12 |     return product.list_price\n  13 | "
+    },
+    {
+     "flag": "ai_search",
+     "file": "demo/mixmart/mixmart/search.py",
+     "line": 9,
+     "scope": "search",
+     "snippet": "   7 | def search(query: str, features: Features) -> list[str]:\n   8 |     q = query.lower()\n   9 |     if features.on(\"ai_search\"):\n  10 |         # semantic index stores normalised ids\n  11 |         return [sku.lower() for sku, p in CATALOG.items() if q in p.name.lower() or any(q in t for t in p.tags)]\n  12 |     return [sku for sku, p in CATALOG.items() if q in p.name.lower() or q in p.tags]"
+    },
+    {
+     "flag": "new_checkout",
+     "file": "demo/mixmart/mixmart/ui.py",
+     "line": 11,
+     "scope": "theme",
+     "snippet": "   9 |         \"bg\": \"#111111\" if dark else \"#fafaf5\",\n  10 |         \"fg\": \"#f5f1e6\" if dark else \"#111111\",\n  11 |         \"badges\": [n for n in (\"new_checkout\", \"express_shipping\", \"loyalty_program\", \"ai_search\") if features.on(n)],\n  12 |     }"
+    }
+   ],
+   "dependency_evidence": [
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "discount_engine",
+      "dynamic_pricing",
+      "express_shipping",
+      "guest_checkout",
+      "loyalty_program",
+      "new_checkout",
+      "new_payment",
+      "recommendation"
+     ],
+     "where": "demo/mixmart/mixmart/flags.py",
+     "detail": ""
+    },
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "express_shipping",
+      "loyalty_program",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/ui.py",
+     "detail": ""
+    },
+    {
+     "kind": "scope",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "express_shipping",
+      "loyalty_program",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/ui.py:6",
+     "detail": "function theme"
+    }
+   ],
+   "predicted_by_analysis": true,
+   "explanation": {
+    "mode": "rule-based",
+    "verified": [
+     "Fails when new_checkout=on, dynamic_pricing=on, discount_engine=on, loyalty_program=on hold together (persona: beta_tester, shopper).",
+     "Each of these 4 literal(s) is necessary: flipping any one of them makes the failing test pass.",
+     "Sufficient: the failure occurs in all 48 feasible completions of the other flags.",
+     "For persona beta_tester, Flagsmith evaluates ai_search=on despite the environment default (segment override: beta_testers)."
+    ],
+    "observed_error": "AssertionError: points 95 != 94",
+    "reasoning": [
+     "Static analysis links these flags via module, scope edges, e.g. demo/mixmart/mixmart/flags.py (module); demo/mixmart/mixmart/ui.py (module).",
+     "No exception is raised: the system returns a wrong business result, which per-flag tests did not catch."
+    ],
+    "fix_suggestions": [
+     "Add a regression test pinned to this combination: `donotmix reproduce HZ-2 --run 20261127T023622Z`.",
+     "Until the code is fixed, keep the combination unreachable: either switch one of the core flags off in the affected environment (DoNotMix can propose and verify this) or declare a constraint `!(new_checkout & dynamic_pricing & discount_engine & loyalty_program)` in donotmix.yaml.",
+     "Start at demo/mixmart/mixmart/checkout.py:47 (checkout): check every place where the code paths of new_checkout, dynamic_pricing, discount_engine, loyalty_program read or write shared state."
+    ],
+    "label": "verified = backed by executed tests; reasoning = deterministic heuristics"
+   }
+  },
+  {
+   "fingerprint": "b550ea",
+   "status": "live",
+   "severity": "critical",
+   "failure_class": "silent-wrong-result",
+   "personas": [
+    "beta_tester"
+   ],
+   "atoms": [
+    {
+     "persona": "beta_tester",
+     "test": "demo.mixmart.tests.test_storefront::test_recommendations",
+     "kind": "AssertionError",
+     "message": "AssertionError: recommendation widget is empty for a product with related items"
+    }
+   ],
+   "core": {
+    "recommendation": true
+   },
+   "order": 1,
+   "pinned": {},
+   "masked": [],
+   "trigger": {
+    "recommendation": true
+   },
+   "trigger_claim": "globally-minimal",
+   "reference": "nearest-passing-config",
+   "reference_diff": {
+    "guest_checkout": true,
+    "new_payment": true,
+    "recommendation": false
+   },
+   "generality": {
+    "verdict": "held-in-sample",
+    "checked": 32,
+    "failed": 32,
+    "passed": 0,
+    "masked": 0,
+    "exhaustive": false,
+    "completion_space": 512,
+    "passing_examples": []
+   },
+   "repro_config": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": false,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": false,
+    "recommendation": true,
+    "ai_search": false,
+    "dark_mode": true
+   },
+   "repro_diff_from_live": {},
+   "minimization_tests": 39,
+   "signatures": [
+    "AssertionError: AssertionError: recommendation widget is empty for a product with related items"
+   ],
+   "id": "HZ-3",
+   "title": "recommendation=on -> test_recommendations (AssertionError)",
+   "related": [
+    {
+     "id": "HZ-7",
+     "relation": "same-failure-signature"
+    }
+   ],
+   "effective_flags": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": false,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": false,
+    "recommendation": true,
+    "ai_search": true,
+    "dark_mode": true
+   },
+   "overrides_applied": {
+    "ai_search": true
+   },
+   "repro": {
+    "document": "benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-3.environment.json",
+    "persona": "beta_tester",
+    "command": "DONOTMIX_ENV_DOCUMENT=benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-3.environment.json DONOTMIX_IDENTITY=beta-1 DONOTMIX_TRAITS='{\"beta\": true}' python -m pytest demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider -p no:randomly",
+    "donotmix": "donotmix reproduce HZ-3 --run 20261127T023622Z"
+   },
+   "code_refs": [
+    {
+     "flag": "recommendation",
+     "file": "demo/mixmart/mixmart/recommend.py",
+     "line": 9,
+     "scope": "also_bought",
+     "snippet": "   7 | \n   8 | def also_bought(sku: str, features: Features, limit: int = 3) -> list[str]:\n   9 |     if not features.on(\"recommendation\"):\n  10 |         return []\n  11 |     product = get(sku)\n  12 |     if product is None:"
+    },
+    {
+     "flag": "ai_search",
+     "file": "demo/mixmart/mixmart/search.py",
+     "line": 9,
+     "scope": "search",
+     "snippet": "   7 | def search(query: str, features: Features) -> list[str]:\n   8 |     q = query.lower()\n   9 |     if features.on(\"ai_search\"):\n  10 |         # semantic index stores normalised ids\n  11 |         return [sku.lower() for sku, p in CATALOG.items() if q in p.name.lower() or any(q in t for t in p.tags)]\n  12 |     return [sku for sku, p in CATALOG.items() if q in p.name.lower() or q in p.tags]"
+    },
+    {
+     "flag": "ai_search",
+     "file": "demo/mixmart/mixmart/ui.py",
+     "line": 11,
+     "scope": "theme",
+     "snippet": "   9 |         \"bg\": \"#111111\" if dark else \"#fafaf5\",\n  10 |         \"fg\": \"#f5f1e6\" if dark else \"#111111\",\n  11 |         \"badges\": [n for n in (\"new_checkout\", \"express_shipping\", \"loyalty_program\", \"ai_search\") if features.on(n)],\n  12 |     }"
+    }
+   ],
+   "dependency_evidence": [
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "discount_engine",
+      "dynamic_pricing",
+      "express_shipping",
+      "guest_checkout",
+      "loyalty_program",
+      "new_checkout",
+      "new_payment",
+      "recommendation"
+     ],
+     "where": "demo/mixmart/mixmart/flags.py",
+     "detail": ""
+    },
+    {
+     "kind": "call",
+     "flags": [
+      "ai_search",
+      "recommendation"
+     ],
+     "where": "also_bought",
+     "detail": "also_bought -> callees reading ['ai_search']"
+    }
+   ],
+   "predicted_by_analysis": null,
+   "explanation": {
+    "mode": "rule-based",
+    "verified": [
+     "Fails whenever recommendation=on (persona: beta_tester).",
+     "Each of these 1 literal(s) is necessary: flipping any one of them makes the failing test pass.",
+     "Held in all 32 sampled completions of the other flags (sample, not exhaustive).",
+     "For persona beta_tester, Flagsmith evaluates ai_search=on despite the environment default (segment override: beta_testers)."
+    ],
+    "observed_error": "AssertionError: recommendation widget is empty for a product with related items",
+    "reasoning": [
+     "Static analysis links these flags via call, module edges, e.g. demo/mixmart/mixmart/flags.py (module); also_bought (also_bought -> callees reading ['ai_search']).",
+     "No exception is raised: the system returns a wrong business result, which per-flag tests did not catch."
+    ],
+    "fix_suggestions": [
+     "Add a regression test pinned to this combination: `donotmix reproduce HZ-3 --run 20261127T023622Z`.",
+     "Until the code is fixed, keep the combination unreachable: either switch one of the core flags off in the affected environment (DoNotMix can propose and verify this) or declare a constraint `!(recommendation)` in donotmix.yaml.",
+     "Start at demo/mixmart/mixmart/recommend.py:9 (also_bought): check every place where the code paths of recommendation read or write shared state."
+    ],
+    "label": "verified = backed by executed tests; reasoning = deterministic heuristics"
+   }
+  },
+  {
+   "fingerprint": "9fce95",
+   "status": "latent",
+   "severity": "high",
+   "failure_class": "crash",
+   "personas": [
+    "beta_tester",
+    "shopper"
+   ],
+   "atoms": [
+    {
+     "persona": "beta_tester",
+     "test": "demo.mixmart.tests.test_storefront::test_loyalty_points",
+     "kind": "PaymentError",
+     "message": "mixmart.payments.PaymentError: new gateway requires shipping_method"
+    },
+    {
+     "persona": "beta_tester",
+     "test": "demo.mixmart.tests.test_storefront::test_member_checkout_total",
+     "kind": "PaymentError",
+     "message": "mixmart.payments.PaymentError: new gateway requires shipping_method"
+    },
+    {
+     "persona": "shopper",
+     "test": "demo.mixmart.tests.test_storefront::test_loyalty_points",
+     "kind": "PaymentError",
+     "message": "mixmart.payments.PaymentError: new gateway requires shipping_method"
+    },
+    {
+     "persona": "shopper",
+     "test": "demo.mixmart.tests.test_storefront::test_member_checkout_total",
+     "kind": "PaymentError",
+     "message": "mixmart.payments.PaymentError: new gateway requires shipping_method"
+    }
+   ],
+   "core": {
+    "express_shipping": false,
+    "new_payment": true
+   },
+   "order": 2,
+   "pinned": {
+    "new_checkout": {
+     "value": true,
+     "by": [
+      "new-payment-needs-new-checkout"
+     ]
+    }
+   },
+   "masked": [],
+   "trigger": {
+    "new_checkout": true,
+    "new_payment": true
+   },
+   "trigger_claim": "globally-minimal",
+   "reference": "nearest-passing-config",
+   "reference_diff": {
+    "new_checkout": false,
+    "discount_engine": false
+   },
+   "generality": {
+    "verdict": "sufficient",
+    "checked": 128,
+    "failed": 128,
+    "passed": 0,
+    "masked": 0,
+    "exhaustive": true,
+    "completion_space": 128,
+    "passing_examples": []
+   },
+   "repro_config": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": false,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": true,
+    "recommendation": true,
+    "ai_search": false,
+    "dark_mode": true
+   },
+   "repro_diff_from_live": {
+    "new_payment": true
+   },
+   "minimization_tests": 243,
+   "signatures": [
+    "PaymentError: mixmart.payments.PaymentError: new gateway requires shipping_method"
+   ],
+   "id": "HZ-4",
+   "title": "express_shipping=off + new_payment=on -> test_loyalty_points (PaymentError)",
+   "related": [
+    {
+     "id": "HZ-6",
+     "relation": "same-failure-signature"
+    }
+   ],
+   "effective_flags": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": false,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": true,
+    "recommendation": true,
+    "ai_search": true,
+    "dark_mode": true
+   },
+   "overrides_applied": {
+    "ai_search": true
+   },
+   "repro": {
+    "document": "benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-4.environment.json",
+    "persona": "beta_tester",
+    "command": "DONOTMIX_ENV_DOCUMENT=benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-4.environment.json DONOTMIX_IDENTITY=beta-1 DONOTMIX_TRAITS='{\"beta\": true}' python -m pytest demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider -p no:randomly",
+    "donotmix": "donotmix reproduce HZ-4 --run 20261127T023622Z"
+   },
+   "code_refs": [
+    {
+     "flag": "new_checkout",
+     "file": "demo/mixmart/mixmart/checkout.py",
+     "line": 47,
+     "scope": "checkout",
+     "snippet": "  45 |     if customer is None and not features.on(\"guest_checkout\"):\n  46 |         raise CheckoutError(\"login required\")\n  47 |     if features.on(\"new_checkout\"):\n  48 |         return _new_checkout(cart, customer, features, shipping_choice)\n  49 |     return _legacy_checkout(cart, customer, features)\n  50 | "
+    },
+    {
+     "flag": "new_payment",
+     "file": "demo/mixmart/mixmart/payments.py",
+     "line": 13,
+     "scope": "create_intent",
+     "snippet": "  11 |     if amount <= 0:\n  12 |         raise PaymentError(\"amount must be positive\")\n  13 |     if features.on(\"new_payment\"):\n  14 |         if not shipping_method:\n  15 |             raise PaymentError(\"new gateway requires shipping_method\")\n  16 |         return {\"gateway\": \"nova\", \"amount\": amount, \"currency\": \"USD\", \"shipping_method\": shipping_method}"
+    },
+    {
+     "flag": "ai_search",
+     "file": "demo/mixmart/mixmart/search.py",
+     "line": 9,
+     "scope": "search",
+     "snippet": "   7 | def search(query: str, features: Features) -> list[str]:\n   8 |     q = query.lower()\n   9 |     if features.on(\"ai_search\"):\n  10 |         # semantic index stores normalised ids\n  11 |         return [sku.lower() for sku, p in CATALOG.items() if q in p.name.lower() or any(q in t for t in p.tags)]\n  12 |     return [sku for sku, p in CATALOG.items() if q in p.name.lower() or q in p.tags]"
+    },
+    {
+     "flag": "express_shipping",
+     "file": "demo/mixmart/mixmart/shipping.py",
+     "line": 10,
+     "scope": "select",
+     "snippet": "   8 | def select(requested: str, features: Features) -> tuple[str | None, int]:\n   9 |     \"\"\"Return (method_name, fee). Method names were introduced together with express shipping.\"\"\"\n  10 |     if features.on(\"express_shipping\"):\n  11 |         if requested == \"express\":\n  12 |             return \"express\", EXPRESS_FEE\n  13 |         return \"standard\", STANDARD_FEE"
+    },
+    {
+     "flag": "new_checkout",
+     "file": "demo/mixmart/mixmart/ui.py",
+     "line": 11,
+     "scope": "theme",
+     "snippet": "   9 |         \"bg\": \"#111111\" if dark else \"#fafaf5\",\n  10 |         \"fg\": \"#f5f1e6\" if dark else \"#111111\",\n  11 |         \"badges\": [n for n in (\"new_checkout\", \"express_shipping\", \"loyalty_program\", \"ai_search\") if features.on(n)],\n  12 |     }"
+    }
+   ],
+   "dependency_evidence": [
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "discount_engine",
+      "dynamic_pricing",
+      "express_shipping",
+      "guest_checkout",
+      "loyalty_program",
+      "new_checkout",
+      "new_payment",
+      "recommendation"
+     ],
+     "where": "demo/mixmart/mixmart/flags.py",
+     "detail": ""
+    },
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "express_shipping",
+      "loyalty_program",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/ui.py",
+     "detail": ""
+    },
+    {
+     "kind": "scope",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "express_shipping",
+      "loyalty_program",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/ui.py:6",
+     "detail": "function theme"
+    }
+   ],
+   "predicted_by_analysis": true,
+   "explanation": {
+    "mode": "rule-based",
+    "verified": [
+     "Fails when express_shipping=off, new_payment=on hold together (persona: beta_tester, shopper).",
+     "Each of these 2 literal(s) is necessary: flipping any one of them makes the failing test pass.",
+     "Sufficient: the failure occurs in all 128 feasible completions of the other flags.",
+     "Implied by constraints: new_checkout (constraint new-payment-needs-new-checkout).",
+     "For persona beta_tester, Flagsmith evaluates ai_search=on despite the environment default (segment override: beta_testers)."
+    ],
+    "observed_error": "mixmart.payments.PaymentError: new gateway requires shipping_method",
+    "reasoning": [
+     "Static analysis links these flags via module, scope edges, e.g. demo/mixmart/mixmart/flags.py (module); demo/mixmart/mixmart/ui.py (module).",
+     "The combination raises PaymentError."
+    ],
+    "fix_suggestions": [
+     "Add a regression test pinned to this combination: `donotmix reproduce HZ-4 --run 20261127T023622Z`.",
+     "Until the code is fixed, keep the combination unreachable: either switch one of the core flags off in the affected environment (DoNotMix can propose and verify this) or declare a constraint `!(!express_shipping & new_payment)` in donotmix.yaml.",
+     "Start at demo/mixmart/mixmart/checkout.py:47 (checkout): check every place where the code paths of express_shipping, new_payment read or write shared state."
+    ],
+    "label": "verified = backed by executed tests; reasoning = deterministic heuristics"
+   }
+  },
+  {
+   "fingerprint": "f992ae",
+   "status": "latent",
+   "severity": "high",
+   "failure_class": "crash",
+   "personas": [
+    "beta_tester",
+    "shopper"
+   ],
+   "atoms": [
+    {
+     "persona": "beta_tester",
+     "test": "demo.mixmart.tests.test_storefront::test_guest_checkout_policy",
+     "kind": "AttributeError",
+     "message": "AttributeError: 'NoneType' object has no attribute 'points'"
+    },
+    {
+     "persona": "shopper",
+     "test": "demo.mixmart.tests.test_storefront::test_guest_checkout_policy",
+     "kind": "AttributeError",
+     "message": "AttributeError: 'NoneType' object has no attribute 'points'"
+    }
+   ],
+   "core": {
+    "guest_checkout": true,
+    "loyalty_program": true
+   },
+   "order": 2,
+   "pinned": {
+    "express_shipping": {
+     "value": false,
+     "by": [
+      "express-needs-new-checkout",
+      "no-express-for-guests"
+     ]
+    }
+   },
+   "masked": [
+    "new_payment"
+   ],
+   "trigger": {
+    "guest_checkout": true
+   },
+   "trigger_claim": "globally-minimal",
+   "reference": "live-environment",
+   "reference_diff": {},
+   "generality": {
+    "verdict": "held-in-sample",
+    "checked": 32,
+    "failed": 24,
+    "passed": 0,
+    "masked": 8,
+    "exhaustive": false,
+    "completion_space": 256,
+    "passing_examples": []
+   },
+   "repro_config": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": true,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": false,
+    "recommendation": true,
+    "ai_search": false,
+    "dark_mode": true
+   },
+   "repro_diff_from_live": {
+    "guest_checkout": true
+   },
+   "minimization_tests": 37,
+   "signatures": [
+    "AttributeError: AttributeError: 'NoneType' object has no attribute 'points'"
+   ],
+   "id": "HZ-5",
+   "title": "guest_checkout=on + loyalty_program=on -> test_guest_checkout_policy (AttributeError)",
+   "related": [],
+   "effective_flags": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": true,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": false,
+    "recommendation": true,
+    "ai_search": true,
+    "dark_mode": true
+   },
+   "overrides_applied": {
+    "ai_search": true
+   },
+   "repro": {
+    "document": "benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-5.environment.json",
+    "persona": "beta_tester",
+    "command": "DONOTMIX_ENV_DOCUMENT=benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-5.environment.json DONOTMIX_IDENTITY=beta-1 DONOTMIX_TRAITS='{\"beta\": true}' python -m pytest demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider -p no:randomly",
+    "donotmix": "donotmix reproduce HZ-5 --run 20261127T023622Z"
+   },
+   "code_refs": [
+    {
+     "flag": "guest_checkout",
+     "file": "demo/mixmart/mixmart/checkout.py",
+     "line": 45,
+     "scope": "checkout",
+     "snippet": "  43 | \n  44 | def checkout(cart: dict[str, int], customer: Customer | None, features: Features, shipping_choice: str = \"standard\") -> Order:\n  45 |     if customer is None and not features.on(\"guest_checkout\"):\n  46 |         raise CheckoutError(\"login required\")\n  47 |     if features.on(\"new_checkout\"):\n  48 |         return _new_checkout(cart, customer, features, shipping_choice)"
+    },
+    {
+     "flag": "loyalty_program",
+     "file": "demo/mixmart/mixmart/loyalty.py",
+     "line": 7,
+     "scope": "award_points",
+     "snippet": "   5 | \n   6 | def award_points(customer, total: int, features: Features) -> int:\n   7 |     if not features.on(\"loyalty_program\"):\n   8 |         return 0\n   9 |     points = total // 100\n  10 |     customer.points += points  # customer is an account; see checkout for who can reach here"
+    },
+    {
+     "flag": "ai_search",
+     "file": "demo/mixmart/mixmart/search.py",
+     "line": 9,
+     "scope": "search",
+     "snippet": "   7 | def search(query: str, features: Features) -> list[str]:\n   8 |     q = query.lower()\n   9 |     if features.on(\"ai_search\"):\n  10 |         # semantic index stores normalised ids\n  11 |         return [sku.lower() for sku, p in CATALOG.items() if q in p.name.lower() or any(q in t for t in p.tags)]\n  12 |     return [sku for sku, p in CATALOG.items() if q in p.name.lower() or q in p.tags]"
+    },
+    {
+     "flag": "express_shipping",
+     "file": "demo/mixmart/mixmart/shipping.py",
+     "line": 10,
+     "scope": "select",
+     "snippet": "   8 | def select(requested: str, features: Features) -> tuple[str | None, int]:\n   9 |     \"\"\"Return (method_name, fee). Method names were introduced together with express shipping.\"\"\"\n  10 |     if features.on(\"express_shipping\"):\n  11 |         if requested == \"express\":\n  12 |             return \"express\", EXPRESS_FEE\n  13 |         return \"standard\", STANDARD_FEE"
+    },
+    {
+     "flag": "express_shipping",
+     "file": "demo/mixmart/mixmart/ui.py",
+     "line": 11,
+     "scope": "theme",
+     "snippet": "   9 |         \"bg\": \"#111111\" if dark else \"#fafaf5\",\n  10 |         \"fg\": \"#f5f1e6\" if dark else \"#111111\",\n  11 |         \"badges\": [n for n in (\"new_checkout\", \"express_shipping\", \"loyalty_program\", \"ai_search\") if features.on(n)],\n  12 |     }"
+    }
+   ],
+   "dependency_evidence": [
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "discount_engine",
+      "dynamic_pricing",
+      "express_shipping",
+      "guest_checkout",
+      "loyalty_program",
+      "new_checkout",
+      "new_payment",
+      "recommendation"
+     ],
+     "where": "demo/mixmart/mixmart/flags.py",
+     "detail": ""
+    },
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "express_shipping",
+      "loyalty_program",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/ui.py",
+     "detail": ""
+    },
+    {
+     "kind": "scope",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "express_shipping",
+      "loyalty_program",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/ui.py:6",
+     "detail": "function theme"
+    }
+   ],
+   "predicted_by_analysis": true,
+   "explanation": {
+    "mode": "rule-based",
+    "verified": [
+     "Fails when guest_checkout=on, loyalty_program=on hold together (persona: beta_tester, shopper).",
+     "Each of these 2 literal(s) is necessary: flipping any one of them makes the failing test pass.",
+     "Held in all 32 sampled completions of the other flags (sample, not exhaustive).",
+     "Implied by constraints: express_shipping (constraint express-needs-new-checkout, no-express-for-guests).",
+     "For persona beta_tester, Flagsmith evaluates ai_search=on despite the environment default (segment override: beta_testers)."
+    ],
+    "observed_error": "AttributeError: 'NoneType' object has no attribute 'points'",
+    "reasoning": [
+     "Static analysis links these flags via module, scope edges, e.g. demo/mixmart/mixmart/flags.py (module); demo/mixmart/mixmart/ui.py (module).",
+     "The combination raises AttributeError."
+    ],
+    "fix_suggestions": [
+     "Add a regression test pinned to this combination: `donotmix reproduce HZ-5 --run 20261127T023622Z`.",
+     "Until the code is fixed, keep the combination unreachable: either switch one of the core flags off in the affected environment (DoNotMix can propose and verify this) or declare a constraint `!(guest_checkout & loyalty_program)` in donotmix.yaml.",
+     "Start at demo/mixmart/mixmart/checkout.py:45 (checkout): check every place where the code paths of guest_checkout, loyalty_program read or write shared state."
+    ],
+    "label": "verified = backed by executed tests; reasoning = deterministic heuristics"
+   }
+  },
+  {
+   "fingerprint": "3d7cb6",
+   "status": "latent",
+   "severity": "high",
+   "failure_class": "crash",
+   "personas": [
+    "beta_tester",
+    "shopper"
+   ],
+   "atoms": [
+    {
+     "persona": "beta_tester",
+     "test": "demo.mixmart.tests.test_storefront::test_guest_checkout_policy",
+     "kind": "PaymentError",
+     "message": "mixmart.payments.PaymentError: new gateway requires shipping_method"
+    },
+    {
+     "persona": "shopper",
+     "test": "demo.mixmart.tests.test_storefront::test_guest_checkout_policy",
+     "kind": "PaymentError",
+     "message": "mixmart.payments.PaymentError: new gateway requires shipping_method"
+    }
+   ],
+   "core": {
+    "guest_checkout": true,
+    "new_payment": true
+   },
+   "order": 2,
+   "pinned": {
+    "new_checkout": {
+     "value": true,
+     "by": [
+      "new-payment-needs-new-checkout"
+     ]
+    },
+    "express_shipping": {
+     "value": false,
+     "by": [
+      "no-express-for-guests"
+     ]
+    }
+   },
+   "masked": [],
+   "trigger": {
+    "guest_checkout": true,
+    "new_payment": true
+   },
+   "trigger_claim": "globally-minimal",
+   "reference": "live-environment",
+   "reference_diff": {},
+   "generality": {
+    "verdict": "held-in-sample",
+    "checked": 32,
+    "failed": 32,
+    "passed": 0,
+    "masked": 0,
+    "exhaustive": false,
+    "completion_space": 256,
+    "passing_examples": []
+   },
+   "repro_config": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": true,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": true,
+    "recommendation": true,
+    "ai_search": false,
+    "dark_mode": true
+   },
+   "repro_diff_from_live": {
+    "guest_checkout": true,
+    "new_payment": true
+   },
+   "minimization_tests": 4,
+   "signatures": [
+    "PaymentError: mixmart.payments.PaymentError: new gateway requires shipping_method"
+   ],
+   "id": "HZ-6",
+   "title": "guest_checkout=on + new_payment=on -> test_guest_checkout_policy (PaymentError)",
+   "related": [
+    {
+     "id": "HZ-4",
+     "relation": "same-failure-signature"
+    }
+   ],
+   "effective_flags": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": true,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": true,
+    "recommendation": true,
+    "ai_search": true,
+    "dark_mode": true
+   },
+   "overrides_applied": {
+    "ai_search": true
+   },
+   "repro": {
+    "document": "benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-6.environment.json",
+    "persona": "beta_tester",
+    "command": "DONOTMIX_ENV_DOCUMENT=benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-6.environment.json DONOTMIX_IDENTITY=beta-1 DONOTMIX_TRAITS='{\"beta\": true}' python -m pytest demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider -p no:randomly",
+    "donotmix": "donotmix reproduce HZ-6 --run 20261127T023622Z"
+   },
+   "code_refs": [
+    {
+     "flag": "guest_checkout",
+     "file": "demo/mixmart/mixmart/checkout.py",
+     "line": 45,
+     "scope": "checkout",
+     "snippet": "  43 | \n  44 | def checkout(cart: dict[str, int], customer: Customer | None, features: Features, shipping_choice: str = \"standard\") -> Order:\n  45 |     if customer is None and not features.on(\"guest_checkout\"):\n  46 |         raise CheckoutError(\"login required\")\n  47 |     if features.on(\"new_checkout\"):\n  48 |         return _new_checkout(cart, customer, features, shipping_choice)"
+    },
+    {
+     "flag": "new_checkout",
+     "file": "demo/mixmart/mixmart/checkout.py",
+     "line": 47,
+     "scope": "checkout",
+     "snippet": "  45 |     if customer is None and not features.on(\"guest_checkout\"):\n  46 |         raise CheckoutError(\"login required\")\n  47 |     if features.on(\"new_checkout\"):\n  48 |         return _new_checkout(cart, customer, features, shipping_choice)\n  49 |     return _legacy_checkout(cart, customer, features)\n  50 | "
+    },
+    {
+     "flag": "new_payment",
+     "file": "demo/mixmart/mixmart/payments.py",
+     "line": 13,
+     "scope": "create_intent",
+     "snippet": "  11 |     if amount <= 0:\n  12 |         raise PaymentError(\"amount must be positive\")\n  13 |     if features.on(\"new_payment\"):\n  14 |         if not shipping_method:\n  15 |             raise PaymentError(\"new gateway requires shipping_method\")\n  16 |         return {\"gateway\": \"nova\", \"amount\": amount, \"currency\": \"USD\", \"shipping_method\": shipping_method}"
+    },
+    {
+     "flag": "ai_search",
+     "file": "demo/mixmart/mixmart/search.py",
+     "line": 9,
+     "scope": "search",
+     "snippet": "   7 | def search(query: str, features: Features) -> list[str]:\n   8 |     q = query.lower()\n   9 |     if features.on(\"ai_search\"):\n  10 |         # semantic index stores normalised ids\n  11 |         return [sku.lower() for sku, p in CATALOG.items() if q in p.name.lower() or any(q in t for t in p.tags)]\n  12 |     return [sku for sku, p in CATALOG.items() if q in p.name.lower() or q in p.tags]"
+    },
+    {
+     "flag": "express_shipping",
+     "file": "demo/mixmart/mixmart/shipping.py",
+     "line": 10,
+     "scope": "select",
+     "snippet": "   8 | def select(requested: str, features: Features) -> tuple[str | None, int]:\n   9 |     \"\"\"Return (method_name, fee). Method names were introduced together with express shipping.\"\"\"\n  10 |     if features.on(\"express_shipping\"):\n  11 |         if requested == \"express\":\n  12 |             return \"express\", EXPRESS_FEE\n  13 |         return \"standard\", STANDARD_FEE"
+    },
+    {
+     "flag": "new_checkout",
+     "file": "demo/mixmart/mixmart/ui.py",
+     "line": 11,
+     "scope": "theme",
+     "snippet": "   9 |         \"bg\": \"#111111\" if dark else \"#fafaf5\",\n  10 |         \"fg\": \"#f5f1e6\" if dark else \"#111111\",\n  11 |         \"badges\": [n for n in (\"new_checkout\", \"express_shipping\", \"loyalty_program\", \"ai_search\") if features.on(n)],\n  12 |     }"
+    }
+   ],
+   "dependency_evidence": [
+    {
+     "kind": "module",
+     "flags": [
+      "guest_checkout",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/checkout.py",
+     "detail": ""
+    },
+    {
+     "kind": "scope",
+     "flags": [
+      "guest_checkout",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/checkout.py:44",
+     "detail": "function checkout"
+    },
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "discount_engine",
+      "dynamic_pricing",
+      "express_shipping",
+      "guest_checkout",
+      "loyalty_program",
+      "new_checkout",
+      "new_payment",
+      "recommendation"
+     ],
+     "where": "demo/mixmart/mixmart/flags.py",
+     "detail": ""
+    },
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "express_shipping",
+      "loyalty_program",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/ui.py",
+     "detail": ""
+    },
+    {
+     "kind": "scope",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "express_shipping",
+      "loyalty_program",
+      "new_checkout"
+     ],
+     "where": "demo/mixmart/mixmart/ui.py:6",
+     "detail": "function theme"
+    }
+   ],
+   "predicted_by_analysis": true,
+   "explanation": {
+    "mode": "rule-based",
+    "verified": [
+     "Fails when guest_checkout=on, new_payment=on hold together (persona: beta_tester, shopper).",
+     "Each of these 2 literal(s) is necessary: flipping any one of them makes the failing test pass.",
+     "Held in all 32 sampled completions of the other flags (sample, not exhaustive).",
+     "Implied by constraints: new_checkout (constraint new-payment-needs-new-checkout), express_shipping (constraint no-express-for-guests).",
+     "For persona beta_tester, Flagsmith evaluates ai_search=on despite the environment default (segment override: beta_testers)."
+    ],
+    "observed_error": "mixmart.payments.PaymentError: new gateway requires shipping_method",
+    "reasoning": [
+     "Static analysis links these flags via module, scope edges, e.g. demo/mixmart/mixmart/checkout.py (module); demo/mixmart/mixmart/checkout.py:44 (function checkout).",
+     "The combination raises PaymentError."
+    ],
+    "fix_suggestions": [
+     "Add a regression test pinned to this combination: `donotmix reproduce HZ-6 --run 20261127T023622Z`.",
+     "Until the code is fixed, keep the combination unreachable: either switch one of the core flags off in the affected environment (DoNotMix can propose and verify this) or declare a constraint `!(guest_checkout & new_payment)` in donotmix.yaml.",
+     "Start at demo/mixmart/mixmart/checkout.py:45 (checkout): check every place where the code paths of guest_checkout, new_payment read or write shared state."
+    ],
+    "label": "verified = backed by executed tests; reasoning = deterministic heuristics"
+   }
+  },
+  {
+   "fingerprint": "1750fe",
+   "status": "latent",
+   "severity": "medium",
+   "failure_class": "silent-wrong-result",
+   "personas": [
+    "shopper"
+   ],
+   "atoms": [
+    {
+     "persona": "shopper",
+     "test": "demo.mixmart.tests.test_storefront::test_recommendations",
+     "kind": "AssertionError",
+     "message": "AssertionError: recommendation widget is empty for a product with related items"
+    }
+   ],
+   "core": {
+    "recommendation": true,
+    "ai_search": true
+   },
+   "order": 2,
+   "pinned": {},
+   "masked": [],
+   "trigger": {
+    "ai_search": true
+   },
+   "trigger_claim": "globally-minimal",
+   "reference": "live-environment",
+   "reference_diff": {},
+   "generality": {
+    "verdict": "held-in-sample",
+    "checked": 32,
+    "failed": 32,
+    "passed": 0,
+    "masked": 0,
+    "exhaustive": false,
+    "completion_space": 256,
+    "passing_examples": []
+   },
+   "repro_config": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": false,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": false,
+    "recommendation": true,
+    "ai_search": true,
+    "dark_mode": true
+   },
+   "repro_diff_from_live": {
+    "ai_search": true
+   },
+   "minimization_tests": 35,
+   "signatures": [
+    "AssertionError: AssertionError: recommendation widget is empty for a product with related items"
+   ],
+   "id": "HZ-7",
+   "title": "recommendation=on + ai_search=on -> test_recommendations (AssertionError)",
+   "related": [
+    {
+     "id": "HZ-3",
+     "relation": "same-failure-signature"
+    }
+   ],
+   "effective_flags": {
+    "new_checkout": true,
+    "dynamic_pricing": true,
+    "discount_engine": true,
+    "guest_checkout": false,
+    "express_shipping": false,
+    "loyalty_program": true,
+    "new_payment": false,
+    "recommendation": true,
+    "ai_search": true,
+    "dark_mode": true
+   },
+   "overrides_applied": {},
+   "repro": {
+    "document": "benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-7.environment.json",
+    "persona": "shopper",
+    "command": "DONOTMIX_ENV_DOCUMENT=benchmarks/results/mixmart/runs/20261127T023622Z/repro/HZ-7.environment.json DONOTMIX_IDENTITY=shopper-1 DONOTMIX_TRAITS='{\"beta\": false}' python -m pytest demo/mixmart/tests/test_storefront.py -q -p no:cacheprovider -p no:randomly",
+    "donotmix": "donotmix reproduce HZ-7 --run 20261127T023622Z"
+   },
+   "code_refs": [
+    {
+     "flag": "recommendation",
+     "file": "demo/mixmart/mixmart/recommend.py",
+     "line": 9,
+     "scope": "also_bought",
+     "snippet": "   7 | \n   8 | def also_bought(sku: str, features: Features, limit: int = 3) -> list[str]:\n   9 |     if not features.on(\"recommendation\"):\n  10 |         return []\n  11 |     product = get(sku)\n  12 |     if product is None:"
+    },
+    {
+     "flag": "ai_search",
+     "file": "demo/mixmart/mixmart/search.py",
+     "line": 9,
+     "scope": "search",
+     "snippet": "   7 | def search(query: str, features: Features) -> list[str]:\n   8 |     q = query.lower()\n   9 |     if features.on(\"ai_search\"):\n  10 |         # semantic index stores normalised ids\n  11 |         return [sku.lower() for sku, p in CATALOG.items() if q in p.name.lower() or any(q in t for t in p.tags)]\n  12 |     return [sku for sku, p in CATALOG.items() if q in p.name.lower() or q in p.tags]"
+    },
+    {
+     "flag": "ai_search",
+     "file": "demo/mixmart/mixmart/ui.py",
+     "line": 11,
+     "scope": "theme",
+     "snippet": "   9 |         \"bg\": \"#111111\" if dark else \"#fafaf5\",\n  10 |         \"fg\": \"#f5f1e6\" if dark else \"#111111\",\n  11 |         \"badges\": [n for n in (\"new_checkout\", \"express_shipping\", \"loyalty_program\", \"ai_search\") if features.on(n)],\n  12 |     }"
+    }
+   ],
+   "dependency_evidence": [
+    {
+     "kind": "module",
+     "flags": [
+      "ai_search",
+      "dark_mode",
+      "discount_engine",
+      "dynamic_pricing",
+      "express_shipping",
+      "guest_checkout",
+      "loyalty_program",
+      "new_checkout",
+      "new_payment",
+      "recommendation"
+     ],
+     "where": "demo/mixmart/mixmart/flags.py",
+     "detail": ""
+    },
+    {
+     "kind": "call",
+     "flags": [
+      "ai_search",
+      "recommendation"
+     ],
+     "where": "also_bought",
+     "detail": "also_bought -> callees reading ['ai_search']"
+    }
+   ],
+   "predicted_by_analysis": true,
+   "explanation": {
+    "mode": "rule-based",
+    "verified": [
+     "Fails when recommendation=on, ai_search=on hold together (persona: shopper).",
+     "Each of these 2 literal(s) is necessary: flipping any one of them makes the failing test pass.",
+     "Held in all 32 sampled completions of the other flags (sample, not exhaustive)."
+    ],
+    "observed_error": "AssertionError: recommendation widget is empty for a product with related items",
+    "reasoning": [
+     "Static analysis links these flags via call, module edges, e.g. demo/mixmart/mixmart/flags.py (module); also_bought (also_bought -> callees reading ['ai_search']).",
+     "No exception is raised: the system returns a wrong business result, which per-flag tests did not catch."
+    ],
+    "fix_suggestions": [
+     "Add a regression test pinned to this combination: `donotmix reproduce HZ-7 --run 20261127T023622Z`.",
+     "Until the code is fixed, keep the combination unreachable: either switch one of the core flags off in the affected environment (DoNotMix can propose and verify this) or declare a constraint `!(recommendation & ai_search)` in donotmix.yaml.",
+     "Start at demo/mixmart/mixmart/recommend.py:9 (also_bought): check every place where the code paths of recommendation, ai_search read or write shared state."
+    ],
+    "label": "verified = backed by executed tests; reasoning = deterministic heuristics"
+   }
+  }
+ ],
+ "matrix": {
+  "flags": [
+   "new_checkout",
+   "dynamic_pricing",
+   "discount_engine",
+   "guest_checkout",
+   "express_shipping",
+   "loyalty_program",
+   "new_payment",
+   "recommendation",
+   "ai_search",
+   "dark_mode"
+  ],
+  "pairs": [
+   {
+    "a": "new_checkout",
+    "b": "dynamic_pricing",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "hazard",
+    "hazards": [
+     "HZ-1",
+     "HZ-2"
+    ]
+   },
+   {
+    "a": "new_checkout",
+    "b": "discount_engine",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "hazard",
+    "hazards": [
+     "HZ-1",
+     "HZ-2"
+    ]
+   },
+   {
+    "a": "new_checkout",
+    "b": "guest_checkout",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "new_checkout",
+    "b": "express_shipping",
+    "feasible": 3,
+    "covered": 3,
+    "infeasible": 1,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "new_checkout",
+    "b": "loyalty_program",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "hazard",
+    "hazards": [
+     "HZ-2"
+    ]
+   },
+   {
+    "a": "new_checkout",
+    "b": "new_payment",
+    "feasible": 3,
+    "covered": 3,
+    "infeasible": 1,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "new_checkout",
+    "b": "recommendation",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "new_checkout",
+    "b": "ai_search",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "new_checkout",
+    "b": "dark_mode",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "dynamic_pricing",
+    "b": "discount_engine",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "hazard",
+    "hazards": [
+     "HZ-1",
+     "HZ-2"
+    ]
+   },
+   {
+    "a": "dynamic_pricing",
+    "b": "guest_checkout",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "dynamic_pricing",
+    "b": "express_shipping",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "dynamic_pricing",
+    "b": "loyalty_program",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "hazard",
+    "hazards": [
+     "HZ-2"
+    ]
+   },
+   {
+    "a": "dynamic_pricing",
+    "b": "new_payment",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "dynamic_pricing",
+    "b": "recommendation",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "dynamic_pricing",
+    "b": "ai_search",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "dynamic_pricing",
+    "b": "dark_mode",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "discount_engine",
+    "b": "guest_checkout",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "discount_engine",
+    "b": "express_shipping",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "discount_engine",
+    "b": "loyalty_program",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "hazard",
+    "hazards": [
+     "HZ-2"
+    ]
+   },
+   {
+    "a": "discount_engine",
+    "b": "new_payment",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "discount_engine",
+    "b": "recommendation",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "discount_engine",
+    "b": "ai_search",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "discount_engine",
+    "b": "dark_mode",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "guest_checkout",
+    "b": "express_shipping",
+    "feasible": 3,
+    "covered": 3,
+    "infeasible": 1,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "guest_checkout",
+    "b": "loyalty_program",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "hazard",
+    "hazards": [
+     "HZ-5"
+    ]
+   },
+   {
+    "a": "guest_checkout",
+    "b": "new_payment",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "hazard",
+    "hazards": [
+     "HZ-6"
+    ]
+   },
+   {
+    "a": "guest_checkout",
+    "b": "recommendation",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "guest_checkout",
+    "b": "ai_search",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "guest_checkout",
+    "b": "dark_mode",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "express_shipping",
+    "b": "loyalty_program",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "express_shipping",
+    "b": "new_payment",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "hazard",
+    "hazards": [
+     "HZ-4"
+    ]
+   },
+   {
+    "a": "express_shipping",
+    "b": "recommendation",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "express_shipping",
+    "b": "ai_search",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "express_shipping",
+    "b": "dark_mode",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "loyalty_program",
+    "b": "new_payment",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "loyalty_program",
+    "b": "recommendation",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "loyalty_program",
+    "b": "ai_search",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "loyalty_program",
+    "b": "dark_mode",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "new_payment",
+    "b": "recommendation",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "new_payment",
+    "b": "ai_search",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "new_payment",
+    "b": "dark_mode",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "recommendation",
+    "b": "ai_search",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "hazard",
+    "hazards": [
+     "HZ-7"
+    ]
+   },
+   {
+    "a": "recommendation",
+    "b": "dark_mode",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   },
+   {
+    "a": "ai_search",
+    "b": "dark_mode",
+    "feasible": 4,
+    "covered": 4,
+    "infeasible": 0,
+    "status": "covered",
+    "hazards": []
+   }
+  ],
+  "triples": [
+   {
+    "flags": [
+     "new_checkout",
+     "dynamic_pricing",
+     "discount_engine"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": [
+     "HZ-1",
+     "HZ-2"
+    ]
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "dynamic_pricing",
+     "guest_checkout"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "dynamic_pricing",
+     "express_shipping"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "dynamic_pricing",
+     "loyalty_program"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": [
+     "HZ-2"
+    ]
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "dynamic_pricing",
+     "new_payment"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "dynamic_pricing",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "dynamic_pricing",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "dynamic_pricing",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "discount_engine",
+     "guest_checkout"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "discount_engine",
+     "express_shipping"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "discount_engine",
+     "loyalty_program"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": [
+     "HZ-2"
+    ]
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "discount_engine",
+     "new_payment"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "discount_engine",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "discount_engine",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "discount_engine",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "guest_checkout",
+     "express_shipping"
+    ],
+    "feasible": 5,
+    "covered": 5,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "guest_checkout",
+     "loyalty_program"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "guest_checkout",
+     "new_payment"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "guest_checkout",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "guest_checkout",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "guest_checkout",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "express_shipping",
+     "loyalty_program"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "express_shipping",
+     "new_payment"
+    ],
+    "feasible": 5,
+    "covered": 5,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "express_shipping",
+     "recommendation"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "express_shipping",
+     "ai_search"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "express_shipping",
+     "dark_mode"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "loyalty_program",
+     "new_payment"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "loyalty_program",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "loyalty_program",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "loyalty_program",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "new_payment",
+     "recommendation"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "new_payment",
+     "ai_search"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "new_payment",
+     "dark_mode"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "recommendation",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "recommendation",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_checkout",
+     "ai_search",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "discount_engine",
+     "guest_checkout"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "discount_engine",
+     "express_shipping"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "discount_engine",
+     "loyalty_program"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": [
+     "HZ-2"
+    ]
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "discount_engine",
+     "new_payment"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "discount_engine",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "discount_engine",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "discount_engine",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "guest_checkout",
+     "express_shipping"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "guest_checkout",
+     "loyalty_program"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "guest_checkout",
+     "new_payment"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "guest_checkout",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "guest_checkout",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "guest_checkout",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "express_shipping",
+     "loyalty_program"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "express_shipping",
+     "new_payment"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "express_shipping",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "express_shipping",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "express_shipping",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "loyalty_program",
+     "new_payment"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "loyalty_program",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "loyalty_program",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "loyalty_program",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "new_payment",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "new_payment",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "new_payment",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "recommendation",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "recommendation",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "dynamic_pricing",
+     "ai_search",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "guest_checkout",
+     "express_shipping"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "guest_checkout",
+     "loyalty_program"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "guest_checkout",
+     "new_payment"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "guest_checkout",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "guest_checkout",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "guest_checkout",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "express_shipping",
+     "loyalty_program"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "express_shipping",
+     "new_payment"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "express_shipping",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "express_shipping",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "express_shipping",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "loyalty_program",
+     "new_payment"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "loyalty_program",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "loyalty_program",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "loyalty_program",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "new_payment",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "new_payment",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "new_payment",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "recommendation",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "recommendation",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "discount_engine",
+     "ai_search",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "express_shipping",
+     "loyalty_program"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "express_shipping",
+     "new_payment"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "express_shipping",
+     "recommendation"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "express_shipping",
+     "ai_search"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "express_shipping",
+     "dark_mode"
+    ],
+    "feasible": 6,
+    "covered": 6,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "loyalty_program",
+     "new_payment"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "loyalty_program",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "loyalty_program",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "loyalty_program",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "new_payment",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "new_payment",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "new_payment",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "recommendation",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "recommendation",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "guest_checkout",
+     "ai_search",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "express_shipping",
+     "loyalty_program",
+     "new_payment"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "express_shipping",
+     "loyalty_program",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "express_shipping",
+     "loyalty_program",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "express_shipping",
+     "loyalty_program",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "express_shipping",
+     "new_payment",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "express_shipping",
+     "new_payment",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "express_shipping",
+     "new_payment",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "express_shipping",
+     "recommendation",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "express_shipping",
+     "recommendation",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "express_shipping",
+     "ai_search",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "loyalty_program",
+     "new_payment",
+     "recommendation"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "loyalty_program",
+     "new_payment",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "loyalty_program",
+     "new_payment",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "loyalty_program",
+     "recommendation",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "loyalty_program",
+     "recommendation",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "loyalty_program",
+     "ai_search",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_payment",
+     "recommendation",
+     "ai_search"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_payment",
+     "recommendation",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "new_payment",
+     "ai_search",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   },
+   {
+    "flags": [
+     "recommendation",
+     "ai_search",
+     "dark_mode"
+    ],
+    "feasible": 8,
+    "covered": 8,
+    "hazards": []
+   }
+  ],
+  "hazard_cores": {
+   "HZ-1": [
+    "discount_engine",
+    "dynamic_pricing",
+    "new_checkout"
+   ],
+   "HZ-2": [
+    "discount_engine",
+    "dynamic_pricing",
+    "loyalty_program",
+    "new_checkout"
+   ],
+   "HZ-3": [
+    "recommendation"
+   ],
+   "HZ-4": [
+    "express_shipping",
+    "new_payment"
+   ],
+   "HZ-5": [
+    "guest_checkout",
+    "loyalty_program"
+   ],
+   "HZ-6": [
+    "guest_checkout",
+    "new_payment"
+   ],
+   "HZ-7": [
+    "ai_search",
+    "recommendation"
+   ]
+  }
+ },
+ "tests": [
+  {
+   "index": 0,
+   "diff_from_live": {},
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_loyalty_points",
+    "test_member_checkout_total",
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 1,
+   "diff_from_live": {
+    "new_checkout": false,
+    "dynamic_pricing": false,
+    "discount_engine": false,
+    "guest_checkout": true,
+    "loyalty_program": false,
+    "recommendation": false,
+    "ai_search": true,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "pass",
+    "beta_tester": "pass"
+   },
+   "failed": []
+  },
+  {
+   "index": 2,
+   "diff_from_live": {
+    "express_shipping": true,
+    "loyalty_program": false,
+    "new_payment": true,
+    "recommendation": false,
+    "ai_search": true,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_member_checkout_total"
+   ]
+  },
+  {
+   "index": 3,
+   "diff_from_live": {
+    "dynamic_pricing": false,
+    "discount_engine": false,
+    "express_shipping": true,
+    "loyalty_program": false,
+    "new_payment": true,
+    "ai_search": true
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 4,
+   "diff_from_live": {
+    "new_checkout": false,
+    "guest_checkout": true,
+    "loyalty_program": false,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "pass",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 5,
+   "diff_from_live": {
+    "new_checkout": false,
+    "dynamic_pricing": false,
+    "ai_search": true,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 6,
+   "diff_from_live": {
+    "dynamic_pricing": false,
+    "discount_engine": false,
+    "express_shipping": true,
+    "loyalty_program": false,
+    "recommendation": false,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "pass",
+    "beta_tester": "pass"
+   },
+   "failed": []
+  },
+  {
+   "index": 7,
+   "diff_from_live": {
+    "new_checkout": false,
+    "discount_engine": false,
+    "loyalty_program": false,
+    "recommendation": false,
+    "ai_search": true
+   },
+   "results": {
+    "shopper": "pass",
+    "beta_tester": "pass"
+   },
+   "failed": []
+  },
+  {
+   "index": 8,
+   "diff_from_live": {
+    "discount_engine": false,
+    "express_shipping": true,
+    "ai_search": true,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 9,
+   "diff_from_live": {
+    "dynamic_pricing": false,
+    "guest_checkout": true,
+    "loyalty_program": false,
+    "new_payment": true,
+    "ai_search": true,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_guest_checkout_policy",
+    "test_loyalty_points",
+    "test_member_checkout_total",
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 10,
+   "diff_from_live": {
+    "new_checkout": false,
+    "dynamic_pricing": false,
+    "guest_checkout": true,
+    "recommendation": false,
+    "ai_search": true
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_guest_checkout_policy"
+   ]
+  },
+  {
+   "index": 11,
+   "diff_from_live": {
+    "express_shipping": true,
+    "new_payment": true,
+    "recommendation": false,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_loyalty_points",
+    "test_member_checkout_total"
+   ]
+  },
+  {
+   "index": 12,
+   "diff_from_live": {
+    "new_checkout": false,
+    "dynamic_pricing": false,
+    "discount_engine": false,
+    "guest_checkout": true,
+    "loyalty_program": false
+   },
+   "results": {
+    "shopper": "pass",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 13,
+   "diff_from_live": {
+    "dynamic_pricing": false,
+    "discount_engine": false,
+    "guest_checkout": true,
+    "new_payment": true,
+    "recommendation": false,
+    "ai_search": true,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_guest_checkout_policy",
+    "test_loyalty_points",
+    "test_member_checkout_total"
+   ]
+  },
+  {
+   "index": 14,
+   "diff_from_live": {
+    "new_checkout": false,
+    "discount_engine": false,
+    "guest_checkout": true,
+    "recommendation": false,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_guest_checkout_policy"
+   ]
+  },
+  {
+   "index": 15,
+   "diff_from_live": {
+    "express_shipping": true,
+    "loyalty_program": false,
+    "new_payment": true,
+    "recommendation": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_member_checkout_total"
+   ]
+  },
+  {
+   "index": 16,
+   "diff_from_live": {
+    "dynamic_pricing": false,
+    "express_shipping": true,
+    "ai_search": true
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 17,
+   "diff_from_live": {
+    "discount_engine": false,
+    "guest_checkout": true,
+    "loyalty_program": false,
+    "new_payment": true,
+    "ai_search": true
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_guest_checkout_policy",
+    "test_loyalty_points",
+    "test_member_checkout_total",
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 18,
+   "diff_from_live": {
+    "dynamic_pricing": false,
+    "discount_engine": false,
+    "loyalty_program": false,
+    "new_payment": true,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_loyalty_points",
+    "test_member_checkout_total",
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 19,
+   "diff_from_live": {
+    "dynamic_pricing": false,
+    "discount_engine": false,
+    "express_shipping": true,
+    "new_payment": true
+   },
+   "results": {
+    "shopper": "pass",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 20,
+   "diff_from_live": {
+    "dynamic_pricing": false,
+    "guest_checkout": true,
+    "dark_mode": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_guest_checkout_policy",
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 21,
+   "diff_from_live": {
+    "new_checkout": false,
+    "discount_engine": false
+   },
+   "results": {
+    "shopper": "pass",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_recommendations"
+   ]
+  },
+  {
+   "index": 22,
+   "diff_from_live": {
+    "guest_checkout": true,
+    "loyalty_program": false,
+    "new_payment": true,
+    "recommendation": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_guest_checkout_policy",
+    "test_loyalty_points",
+    "test_member_checkout_total"
+   ]
+  },
+  {
+   "index": 23,
+   "diff_from_live": {
+    "guest_checkout": true,
+    "new_payment": true,
+    "recommendation": false,
+    "ai_search": true
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_guest_checkout_policy",
+    "test_loyalty_points",
+    "test_member_checkout_total"
+   ]
+  },
+  {
+   "index": 24,
+   "diff_from_live": {
+    "guest_checkout": true,
+    "new_payment": true,
+    "recommendation": false
+   },
+   "results": {
+    "shopper": "fail",
+    "beta_tester": "fail"
+   },
+   "failed": [
+    "test_guest_checkout_policy",
+    "test_loyalty_points",
+    "test_member_checkout_total"
+   ]
+  }
+ ]
+}

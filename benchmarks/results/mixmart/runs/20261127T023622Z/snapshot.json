@@ -1,0 +1,304 @@
+{
+ "schema": "donotmix.snapshot/v1",
+ "source": "flagsmith-cli",
+ "cli_version": "unknown",
+ "api_url": "http://localhost:8000",
+ "project": "MixMart",
+ "environment": {
+  "name": "Staging",
+  "key": "gLwVaeNhazK3e4JjNGUzEF",
+  "id": 2
+ },
+ "fetched_at": "2026-11-27T02:36:24+00:00",
+ "flags": [
+  {
+   "name": "new_checkout",
+   "enabled": true,
+   "value": null,
+   "type": "standard",
+   "segment_overrides": 0,
+   "identity_overrides": 0
+  },
+  {
+   "name": "dynamic_pricing",
+   "enabled": true,
+   "value": null,
+   "type": "standard",
+   "segment_overrides": 0,
+   "identity_overrides": 0
+  },
+  {
+   "name": "discount_engine",
+   "enabled": true,
+   "value": null,
+   "type": "standard",
+   "segment_overrides": 0,
+   "identity_overrides": 0
+  },
+  {
+   "name": "guest_checkout",
+   "enabled": false,
+   "value": null,
+   "type": "standard",
+   "segment_overrides": 0,
+   "identity_overrides": 0
+  },
+  {
+   "name": "express_shipping",
+   "enabled": false,
+   "value": null,
+   "type": "standard",
+   "segment_overrides": 0,
+   "identity_overrides": 0
+  },
+  {
+   "name": "loyalty_program",
+   "enabled": true,
+   "value": null,
+   "type": "standard",
+   "segment_overrides": 0,
+   "identity_overrides": 0
+  },
+  {
+   "name": "new_payment",
+   "enabled": false,
+   "value": null,
+   "type": "standard",
+   "segment_overrides": 0,
+   "identity_overrides": 0
+  },
+  {
+   "name": "recommendation",
+   "enabled": true,
+   "value": null,
+   "type": "standard",
+   "segment_overrides": 0,
+   "identity_overrides": 0
+  },
+  {
+   "name": "ai_search",
+   "enabled": false,
+   "value": null,
+   "type": "standard",
+   "segment_overrides": 1,
+   "identity_overrides": 0
+  },
+  {
+   "name": "dark_mode",
+   "enabled": true,
+   "value": null,
+   "type": "standard",
+   "segment_overrides": 0,
+   "identity_overrides": 0
+  }
+ ],
+ "segments": [
+  {
+   "id": 1,
+   "name": "beta_testers",
+   "description": "Opt-in beta cohort (trait beta=true)"
+  }
+ ],
+ "state_hash": "08015f56129a5db1",
+ "document": {
+  "allow_client_traits": true,
+  "api_key": "gLwVaeNhazK3e4JjNGUzEF",
+  "feature_states": [
+   {
+    "django_id": 2,
+    "enabled": true,
+    "feature": {
+     "id": 1,
+     "name": "new_checkout",
+     "type": "STANDARD"
+    },
+    "feature_segment": null,
+    "feature_state_value": null,
+    "featurestate_uuid": "36686b27-4ecb-482c-a513-a3c9e13da491",
+    "multivariate_feature_state_values": []
+   },
+   {
+    "django_id": 5,
+    "enabled": true,
+    "feature": {
+     "id": 2,
+     "name": "dynamic_pricing",
+     "type": "STANDARD"
+    },
+    "feature_segment": null,
+    "feature_state_value": null,
+    "featurestate_uuid": "417b9723-dec0-44c0-839f-e09bbf857ee8",
+    "multivariate_feature_state_values": []
+   },
+   {
+    "django_id": 8,
+    "enabled": true,
+    "feature": {
+     "id": 3,
+     "name": "discount_engine",
+     "type": "STANDARD"
+    },
+    "feature_segment": null,
+    "feature_state_value": null,
+    "featurestate_uuid": "8832e4ec-3284-4df3-bf22-fccc5d82d3c0",
+    "multivariate_feature_state_values": []
+   },
+   {
+    "django_id": 11,
+    "enabled": false,
+    "feature": {
+     "id": 4,
+     "name": "guest_checkout",
+     "type": "STANDARD"
+    },
+    "feature_segment": null,
+    "feature_state_value": null,
+    "featurestate_uuid": "42de0d84-8554-43e0-ae78-be5db551cea2",
+    "multivariate_feature_state_values": []
+   },
+   {
+    "django_id": 14,
+    "enabled": false,
+    "feature": {
+     "id": 5,
+     "name": "express_shipping",
+     "type": "STANDARD"
+    },
+    "feature_segment": null,
+    "feature_state_value": null,
+    "featurestate_uuid": "7d5dbabc-8823-4b1d-adec-84ce7f479849",
+    "multivariate_feature_state_values": []
+   },
+   {
+    "django_id": 17,
+    "enabled": true,
+    "feature": {
+     "id": 6,
+     "name": "loyalty_program",
+     "type": "STANDARD"
+    },
+    "feature_segment": null,
+    "feature_state_value": null,
+    "featurestate_uuid": "3f60b794-e94b-4855-8a4e-3fc5c4a3a508",
+    "multivariate_feature_state_values": []
+   },
+   {
+    "django_id": 20,
+    "enabled": false,
+    "feature": {
+     "id": 7,
+     "name": "new_payment",
+     "type": "STANDARD"
+    },
+    "feature_segment": null,
+    "feature_state_value": null,
+    "featurestate_uuid": "966d2349-90a4-433c-a096-84ebbc29e21e",
+    "multivariate_feature_state_values": []
+   },
+   {
+    "django_id": 23,
+    "enabled": true,
+    "feature": {
+     "id": 8,
+     "name": "recommendation",
+     "type": "STANDARD"
+    },
+    "feature_segment": null,
+    "feature_state_value": null,
+    "featurestate_uuid": "1b0a6f9d-3dc3-42ff-871d-886e2271490d",
+    "multivariate_feature_state_values": []
+   },
+   {
+    "django_id": 26,
+    "enabled": false,
+    "feature": {
+     "id": 9,
+     "name": "ai_search",
+     "type": "STANDARD"
+    },
+    "feature_segment": null,
+    "feature_state_value": null,
+    "featurestate_uuid": "c379e11e-0da6-4e1c-bd0b-b65e815b8f8d",
+    "multivariate_feature_state_values": []
+   },
+   {
+    "django_id": 29,
+    "enabled": true,
+    "feature": {
+     "id": 10,
+     "name": "dark_mode",
+     "type": "STANDARD"
+    },
+    "feature_segment": null,
+    "feature_state_value": null,
+    "featurestate_uuid": "a2e71b91-a1d1-4f5d-b55f-65700a573968",
+    "multivariate_feature_state_values": []
+   }
+  ],
+  "hide_disabled_flags": null,
+  "hide_sensitive_data": false,
+  "id": 2,
+  "identity_overrides": [],
+  "name": "Staging",
+  "project": {
+   "enable_realtime_updates": false,
+   "hide_disabled_flags": false,
+   "id": 1,
+   "name": "MixMart",
+   "organisation": {
+    "feature_analytics": false,
+    "id": 1,
+    "name": "DoNotMix Demo",
+    "persist_trait_data": true,
+    "stop_serving_flags": false
+   },
+   "segments": [
+    {
+     "feature_states": [
+      {
+       "django_id": 31,
+       "enabled": true,
+       "feature": {
+        "id": 9,
+        "name": "ai_search",
+        "type": "STANDARD"
+       },
+       "feature_segment": {
+        "priority": 0
+       },
+       "feature_state_value": null,
+       "featurestate_uuid": "df848f0d-1cf4-4fe9-b282-43905e4248ec",
+       "multivariate_feature_state_values": []
+      }
+     ],
+     "id": 1,
+     "name": "beta_testers",
+     "rules": [
+      {
+       "conditions": [],
+       "rules": [
+        {
+         "conditions": [
+          {
+           "operator": "EQUAL",
+           "property_": "beta",
+           "value": "true"
+          }
+         ],
+         "rules": [],
+         "type": "ANY"
+        }
+       ],
+       "type": "ALL"
+      }
+     ]
+    }
+   ],
+   "server_key_only_feature_ids": []
+  },
+  "updated_at": "2026-11-27T02:07:05.418839+00:00",
+  "use_identity_composite_key_for_hashing": true,
+  "use_identity_overrides_in_local_eval": true
+ },
+ "mode": "live"
+}

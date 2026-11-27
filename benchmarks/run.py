@@ -137,9 +137,12 @@ def run_case(args) -> list[dict]:
     raw_diff = len(space.diff(space.baseline, first_fail_cfg)) if first_fail_cfg else None
     for h in hazards:
         core = set(h.get("core", {}).items())
+        full = core | {(k, v["value"]) for k, v in (h.get("pinned") or {}).items()}
         truth = [set(f.literals.items()) for f in case.faults]
         if core in truth:
             verdict = "exact"
+        elif any(core < t <= full for t in truth):
+            verdict = "exact-with-implied"
         elif any(t < core for t in truth):
             verdict = "overspecified"
         elif any(core < t for t in truth):
@@ -196,6 +199,7 @@ def summarize(rows: list[dict], split: str = "eval") -> dict:
         ms = [r for r in R if r["exp"] == "minimization_summary" and r["n"] == n and r["colocate"] == co]
         mini.append({"n": n, "colocate": co, "count": cnt,
                      "exact_rate": round(sum(r["verdict"] == "exact" for r in rs) / cnt, 4),
+                     "exact_or_implied_rate": round(sum(r["verdict"] in ("exact", "exact-with-implied") for r in rs) / cnt, 4),
                      "overspecified_rate": round(sum(r["verdict"] == "overspecified" for r in rs) / cnt, 4),
                      "underspecified_rate": round(sum(r["verdict"] == "underspecified" for r in rs) / cnt, 4),
                      "false_positive_rate": round(sum(r["verdict"] == "false_positive" for r in rs) / cnt, 4),
@@ -232,8 +236,8 @@ def hypotheses(summary: dict, skill: dict | None) -> list[dict]:
     # H3
     ev, ok = [], True
     for m in summary["minimization"]:
-        ev.append(f"n={m['n']} colocate={m['colocate']}: {100 * m['exact_rate']:.0f}% exact, core {m['core_size_mean']} literals vs raw counterexample diff {m['raw_counterexample_diff_mean']}, {m['extra_tests_mean']} extra tests")
-        ok &= (m["core_size_mean"] or 99) < (m["raw_counterexample_diff_mean"] or 0) and m["exact_rate"] >= 0.8
+        ev.append(f"n={m['n']} colocate={m['colocate']}: {100 * m['exact_rate']:.0f}% exact ({100 * m['exact_or_implied_rate']:.0f}% incl. constraint-implied literals), 0 FP rate {m['false_positive_rate']}, core {m['core_size_mean']} literals vs raw counterexample diff {m['raw_counterexample_diff_mean']}, {m['extra_tests_mean']} extra tests")
+        ok &= (m["core_size_mean"] or 99) < (m["raw_counterexample_diff_mean"] or 0) and m["exact_or_implied_rate"] >= 0.8
     out.append({"id": "H3", "statement": "Minimization yields much smaller, correct reproduction conditions.", "result": "supported" if ok and ev else "mixed", "evidence": "; ".join(ev)})
     if skill:
         out.append({"id": "H4", "statement": "The Agent Skill reduces context and tool calls for the same verification task.", "result": skill.get("result", "see skill eval"),

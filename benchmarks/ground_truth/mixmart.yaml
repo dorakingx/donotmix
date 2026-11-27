@@ -1,0 +1,23 @@
+# Ground truth for the planted MixMart bugs. Benchmark-side only: the DoNotMix engine never reads this.
+bugs:
+  - id: B1-discount-on-catalog-price
+    kind_of_bug: 3-way, silent wrong total
+    condition: {new_checkout: true, dynamic_pricing: true, discount_engine: true}
+    tests: [test_member_checkout_total, test_loyalty_points]
+    kinds: [AssertionError]
+  - id: B2-guest-loyalty-crash
+    kind_of_bug: 2-way, crash
+    condition: {guest_checkout: true, loyalty_program: true}
+    tests: [test_guest_checkout_policy]
+    kinds: [AttributeError]
+  - id: B3-payment-needs-named-shipping
+    kind_of_bug: 2-way with a DISABLED flag (new_checkout implied by constraint)
+    condition: {new_payment: true, express_shipping: false}
+    tests: [test_member_checkout_total, test_loyalty_points, test_guest_checkout_policy]
+    kinds: [PaymentError]
+  - id: B4-ai-search-normalised-ids
+    kind_of_bug: 2-way; for the beta segment ai_search is on via a Flagsmith segment override
+    condition: {recommendation: true, ai_search: true}
+    persona_conditions: {beta_tester: {recommendation: true}}
+    tests: [test_recommendations]
+    kinds: [AssertionError]
